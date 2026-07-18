@@ -7,7 +7,7 @@
   <meta name="description" content="مقارنة تفاعلية فاخرة بين أفضل عشر سيارات سيدان تنفيذية في العالم — An interactive premium comparison of the world's top luxury executive sedans." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>👑</text></svg>" />
 </head>
@@ -35,10 +35,17 @@
 
   <!-- Hero -->
   <section class="hero">
+    <div class="hero-star" aria-hidden="true">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" fill="none" stroke="#cfd4dc" stroke-width="1.6"/>
+        <path fill="none" stroke="#cfd4dc" stroke-width="1.6" stroke-linejoin="round"
+              d="M50 4 L54 44 L89.8 73 L55 52.5 L50 96 L45 52.5 L10.2 73 L46 44 Z"/>
+      </svg>
+    </div>
     <div>
       <div class="hero-kicker" data-i18n="heroKicker">عرض حصري بأسلوب إطلاق عالمي</div>
       <h1 class="gold-text" data-i18n="heroTitle">المقارنة المطلقة لسيارات السيدان الفاخرة</h1>
-      <p class="hero-sub" data-i18n="heroSubtitle">عشر سيارات أسطورية. أربع عشرة معركة. عرش واحد فقط.</p>
+      <p class="hero-sub" data-i18n="heroSubtitle">عشر سيارات أسطورية. خمس معارك حاسمة. عرش واحد فقط.</p>
       <button id="compare-btn" class="compare-btn" data-i18n="compareBtn">قارن السيارات</button>
       <div class="scroll-hint" data-i18n="scrollHint">اكتشف المتنافسات</div>
     </div>
@@ -130,6 +137,7 @@
 
   <script src="js/data.js"></script>
   <script src="js/visuals.js"></script>
+  <script src="js/images.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

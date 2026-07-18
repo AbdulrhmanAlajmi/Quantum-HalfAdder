@@ -99,7 +99,7 @@ function startParticles() {
       const a = 0.25 + Math.sin(p.tw) * 0.22;
       g.beginPath();
       g.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      g.fillStyle = `rgba(224, 190, 100, ${Math.max(a, 0.04)})`;
+      g.fillStyle = `rgba(208, 214, 223, ${Math.max(a, 0.04)})`;
       g.fill();
     }
     requestAnimationFrame(frame);
@@ -113,7 +113,7 @@ function burstConfetti(count = 160) {
   const canvas = $("#confetti");
   canvas.width = innerWidth;
   canvas.height = innerHeight;
-  const colors = ["#d4af37", "#f6dc8d", "#ffffff", "#b8912e", "#e8e6df"];
+  const colors = ["#d4af37", "#f6dc8d", "#ffffff", "#c9ced6", "#8f97a2"];
   for (let i = 0; i < count; i++) {
     confettiPieces.push({
       x: innerWidth / 2 + (Math.random() - 0.5) * innerWidth * 0.55,
@@ -157,10 +157,10 @@ function renderCards() {
     <article class="car-card" data-car="${car.id}" tabindex="0" role="button"
              aria-label="${carName(car)}">
       <div class="card-top">
-        ${emblemSVG(car.id)}
+        ${logoHTML(car)}
         <span class="card-rank-chip">${lang === "ar" ? car.brandAr : car.brandEn}</span>
       </div>
-      ${carSVG(car, "card")}
+      ${photoHTML(car, "card")}
       <h3>${carName(car)}</h3>
       <div class="card-color">
         <span class="swatch" style="background:${car.color}"></span>
@@ -198,8 +198,8 @@ function openModal(carId) {
   const list = (items) => items.map((x) => `<li>${x}</li>`).join("");
   $("#modal-content").innerHTML = `
     <div class="modal-hero">
-      ${emblemSVG(car.id)}
-      ${carSVG(car, "modal")}
+      ${logoHTML(car)}
+      ${photoHTML(car, "modal")}
       <h2 class="gold-text">${carName(car)}</h2>
       <div class="m-color">
         <span class="swatch" style="background:${car.color}"></span>
@@ -220,7 +220,7 @@ function openModal(carId) {
     </div>
     <div class="modal-scores">
       ${modalScore(T.luxuryScore, car.scores[0])}
-      ${modalScore(T.techScore, car.scores[4])}
+      ${modalScore(T.techScore, car.scores[2])}
       ${modalScore(T.overallScore, overall)}
     </div>`;
   $("#modal-backdrop").classList.add("open");
@@ -401,7 +401,7 @@ async function runFinale() {
       "afterbegin",
       `<div class="reveal-row" data-car="${car.id}">
          <span class="rr-pos">#${pos + 1}</span>
-         ${emblemSVG(car.id)}
+         ${logoHTML(car)}
          <span class="rr-name">${carName(car)}</span>
          <span class="pts">${fmt(totals[car.id])} ${t().points}</span>
        </div>`
@@ -442,7 +442,7 @@ function buildPodium() {
     <div class="podium-slot ${cls}">
       <div class="podium-car">
         ${extras}
-        ${carSVG(car, cls)}
+        ${photoHTML(car, cls)}
       </div>
       <div class="p-name">${carName(car)}</div>
       <div class="p-pts">${fmt(totals[car.id])} ${t().points}</div>
@@ -458,7 +458,7 @@ function buildPodium() {
     (car, i) => `
     <div class="reveal-row shown" style="transition:none">
       <span class="rr-pos">${i < 3 ? t().medals[i] : "#" + (i + 1)}</span>
-      ${emblemSVG(car.id)}
+      ${logoHTML(car)}
       <span class="rr-name">${carName(car)}</span>
       <span class="pts">${fmt(totals[car.id])} ${t().points}</span>
     </div>`
@@ -496,6 +496,7 @@ document.addEventListener("DOMContentLoaded", () => {
   try { saved = localStorage.getItem("uls-lang"); } catch (_) { /* storage blocked */ }
   applyLanguage(saved === "en" ? "en" : "ar");
   startParticles();
+  resolveAllMedia();
 
   $("#lang-btn").addEventListener("click", () => {
     sfx.click();
