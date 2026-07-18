@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>المقارنة المطلقة لسيارات السيدان الفاخرة | Ultimate Luxury Sedan Comparison</title>
+  <meta name="description" content="مقارنة تفاعلية فاخرة بين أفضل عشر سيارات سيدان تنفيذية في العالم — An interactive premium comparison of the world's top luxury executive sedans." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>👑</text></svg>" />
+</head>
+<body>
+
+  <!-- Ambient gold particle background -->
+  <canvas id="particles" aria-hidden="true"></canvas>
+
+  <!-- Loading screen -->
+  <div id="loader" aria-hidden="true">
+    <div class="loader-inner">
+      <div class="loader-ring"></div>
+      <div class="loader-text" data-i18n="loading">جارٍ تجهيز التجربة الفاخرة…</div>
+    </div>
+  </div>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="brand" data-i18n="brand">المقارنة المطلقة</div>
+    <div class="topbar-actions">
+      <button id="sound-btn" class="chip-btn" aria-label="Sound on/off">🔊</button>
+      <button id="lang-btn" class="chip-btn" data-i18n="langButton">English</button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div>
+      <div class="hero-kicker" data-i18n="heroKicker">عرض حصري بأسلوب إطلاق عالمي</div>
+      <h1 class="gold-text" data-i18n="heroTitle">المقارنة المطلقة لسيارات السيدان الفاخرة</h1>
+      <p class="hero-sub" data-i18n="heroSubtitle">عشر سيارات أسطورية. أربع عشرة معركة. عرش واحد فقط.</p>
+      <button id="compare-btn" class="compare-btn" data-i18n="compareBtn">قارن السيارات</button>
+      <div class="scroll-hint" data-i18n="scrollHint">اكتشف المتنافسات</div>
+    </div>
+  </section>
+
+  <!-- Contenders -->
+  <section id="contenders">
+    <div class="section-head">
+      <h2 class="gold-text" data-i18n="contendersTitle">المتنافسات على العرش</h2>
+      <p data-i18n="contendersSub">اضغط على أي سيارة لعرض مواصفاتها الكاملة</p>
+      <div class="head-rule"></div>
+    </div>
+    <div id="cars-grid" class="cars-grid"></div>
+  </section>
+
+  <!-- Arena -->
+  <section id="arena">
+    <div class="section-head">
+      <h2 class="gold-text" data-i18n="arenaTitle">حلبة المقارنة</h2>
+      <div class="head-rule"></div>
+    </div>
+    <div class="arena-shell">
+      <div class="glass-panel">
+        <div id="category-banner" class="category-banner">
+          <div class="category-title">
+            <span id="cat-icon" class="cat-icon">💎</span>
+            <span id="cat-name">—</span>
+          </div>
+          <div class="category-progress"><span id="cat-count">0</span></div>
+          <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+        </div>
+        <div id="bars" class="bars"></div>
+        <div class="skip-wrap">
+          <button id="skip-btn" class="chip-btn" data-i18n="skip">تخطّي إلى النتيجة ⏭</button>
+        </div>
+      </div>
+      <aside class="glass-panel standings">
+        <h3 data-i18n="liveStandings">الترتيب المباشر</h3>
+        <div id="standings-list" class="standings-list"></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Finale -->
+  <section id="finale">
+    <div class="section-head">
+      <h2 class="gold-text" data-i18n="finalTitle">النتيجة النهائية</h2>
+      <div class="head-rule"></div>
+    </div>
+
+    <p class="suspense-title" data-i18n="suspense">لحظة الحسم…</p>
+    <div id="reveal-list" class="reveal-list"></div>
+
+    <div class="podium-stage">
+      <div class="spotlights" aria-hidden="true">
+        <span class="spot s1"></span>
+        <span class="spot s2"></span>
+      </div>
+      <div id="podium" class="podium"></div>
+    </div>
+
+    <div class="champion-titles">
+      <h2 class="gold-text" data-i18n="championTitle">ملكة سيارات السيدان الفاخرة</h2>
+      <p data-i18n="championSubtitle">مرسيدس-بنز الفئة S تبقى المعيار الأعلى للفخامة التنفيذية.</p>
+    </div>
+
+    <div class="replay-wrap">
+      <button id="replay-btn" class="replay-btn" data-i18n="replay">🔁 إعادة المقارنة</button>
+    </div>
+
+    <div class="final-table">
+      <h3 data-i18n="fullRanking">الترتيب الكامل</h3>
+      <div id="final-table-list" class="reveal-list"></div>
+    </div>
+  </section>
+
+  <!-- Confetti overlay -->
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <!-- Car detail modal -->
+  <div id="modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <button id="modal-close" class="modal-close" data-i18n-label="close" aria-label="Close">✕</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <footer data-i18n="footer">تجربة رقمية فاخرة · صُممت بشغف</footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/visuals.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
