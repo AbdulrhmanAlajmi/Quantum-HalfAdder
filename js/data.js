@@ -3,22 +3,13 @@
    ========================================================= */
 "use strict";
 
-/* ---------- Comparison categories (14) ---------- */
+/* ---------- Comparison categories (5) ---------- */
 const CATEGORIES = [
-  { id: "luxury",      icon: "💎", ar: "الفخامة",                 en: "Luxury" },
-  { id: "comfort",     icon: "🛋️", ar: "راحة الركوب",             en: "Ride Comfort" },
-  { id: "quietness",   icon: "🤫", ar: "هدوء المقصورة",           en: "Cabin Quietness" },
-  { id: "interior",    icon: "🎨", ar: "التصميم الداخلي",          en: "Interior Design" },
-  { id: "technology",  icon: "🖥️", ar: "التقنية",                 en: "Technology" },
-  { id: "assistance",  icon: "🛡️", ar: "أنظمة مساعدة السائق",      en: "Driver Assistance" },
-  { id: "rear",        icon: "👔", ar: "راحة الركاب الخلفيين",     en: "Rear Passenger Comfort" },
-  { id: "prestige",    icon: "👑", ar: "الهيبة والمكانة",          en: "Prestige" },
-  { id: "dynamics",    icon: "🏁", ar: "ديناميكية القيادة",        en: "Driving Dynamics" },
-  { id: "build",       icon: "🔧", ar: "جودة الصنع",              en: "Build Quality" },
-  { id: "value",       icon: "💰", ar: "القيمة مقابل السعر",       en: "Value" },
-  { id: "reliability", icon: "⚙️", ar: "الموثوقية",               en: "Reliability" },
-  { id: "presence",    icon: "🌟", ar: "الحضور على الطريق",        en: "Road Presence" },
-  { id: "overall",     icon: "🏆", ar: "التجربة الشاملة",          en: "Overall Experience" },
+  { id: "luxury",      icon: "💎", ar: "الفخامة",          en: "Luxury" },
+  { id: "comfort",     icon: "🛋️", ar: "راحة الركوب",      en: "Ride Comfort" },
+  { id: "technology",  icon: "🖥️", ar: "التقنية",          en: "Technology" },
+  { id: "prestige",    icon: "👑", ar: "الهيبة والمكانة",   en: "Prestige" },
+  { id: "overall",     icon: "🏆", ar: "التجربة الشاملة",   en: "Overall Experience" },
 ];
 
 /* ---------- Cars ----------
@@ -34,7 +25,8 @@ const CARS = [
     brandEn: "Mercedes-Benz", brandAr: "مرسيدس-بنز",
     colorEn: "Obsidian Black", colorAr: "أسود أوبسيديان",
     color: "#0b0b0f", colorLight: "#3a3a46", accent: "#d4af37",
-    scores: [9.8, 9.9, 9.8, 9.7, 9.6, 9.7, 9.8, 9.5, 9.0, 9.6, 8.5, 9.0, 9.5, 9.9],
+    scores: [9.8, 9.9, 9.6, 9.6, 9.9],
+    photoQuery: "Mercedes-Benz S-Class W223", logoQuery: "Mercedes-Benz logo",
     specs: {
       engineEn: "4.0L V8 Biturbo + EQ Boost", engineAr: "V8 مزدوج التيربو 4.0 لتر + EQ Boost",
       hp: 496, torque: 700, topSpeed: 250, accel: "4.4", priceEn: "$135,000", priceAr: "135,000 دولار",
@@ -51,7 +43,8 @@ const CARS = [
     brandEn: "BMW", brandAr: "بي إم دبليو",
     colorEn: "Tanzanite Dark Blue", colorAr: "أزرق تنزانيت داكن",
     color: "#16264c", colorLight: "#3a5a94", accent: "#8ea9d8",
-    scores: [9.5, 9.6, 9.5, 9.4, 9.8, 9.6, 9.6, 9.0, 9.5, 9.4, 8.7, 9.0, 9.3, 9.5],
+    scores: [9.5, 9.6, 9.9, 9.2, 9.6],
+    photoQuery: "BMW 7 Series G70", logoQuery: "BMW logo 2020",
     specs: {
       engineEn: "4.4L V8 TwinPower Turbo", engineAr: "V8 مزدوج التيربو 4.4 لتر",
       hp: 536, torque: 750, topSpeed: 250, accel: "4.2", priceEn: "$127,000", priceAr: "127,000 دولار",
@@ -68,7 +61,8 @@ const CARS = [
     brandEn: "Audi", brandAr: "أودي",
     colorEn: "Floret Silver", colorAr: "فضي فلوريت",
     color: "#c8ccd4", colorLight: "#eef0f4", accent: "#9aa2ae",
-    scores: [9.0, 9.2, 9.4, 9.1, 9.3, 9.2, 9.0, 8.6, 8.8, 9.2, 8.8, 8.9, 8.7, 8.9],
+    scores: [9.0, 9.2, 9.3, 8.7, 9.0],
+    photoQuery: "Audi A8 D5 2022", logoQuery: "Audi logo 2016",
     specs: {
       engineEn: "4.0L V8 TFSI", engineAr: "V8 تيربو 4.0 لتر TFSI",
       hp: 453, torque: 660, topSpeed: 250, accel: "4.6", priceEn: "$90,000", priceAr: "90,000 دولار",
@@ -85,7 +79,8 @@ const CARS = [
     brandEn: "Lexus", brandAr: "لكزس",
     colorEn: "Sonic White", colorAr: "أبيض سونيك",
     color: "#f2f3f5", colorLight: "#ffffff", accent: "#b9bec7",
-    scores: [8.8, 9.1, 9.3, 8.8, 8.4, 8.8, 8.9, 8.0, 8.3, 9.4, 8.9, 10.0, 8.3, 8.6],
+    scores: [8.8, 9.1, 8.4, 8.1, 9.0],
+    photoQuery: "Lexus LS 500 2021", logoQuery: "Lexus logo",
     specs: {
       engineEn: "3.5L V6 Twin-Turbo", engineAr: "V6 مزدوج التيربو 3.5 لتر",
       hp: 416, torque: 600, topSpeed: 250, accel: "5.0", priceEn: "$80,000", priceAr: "80,000 دولار",
@@ -102,7 +97,8 @@ const CARS = [
     brandEn: "Porsche", brandAr: "بورشه",
     colorEn: "Volcano Grey", colorAr: "رمادي بركاني",
     color: "#6b6f76", colorLight: "#a2a7b0", accent: "#c33",
-    scores: [8.9, 8.6, 8.7, 9.0, 9.2, 9.0, 8.4, 9.0, 10.0, 9.3, 8.0, 8.8, 9.2, 9.2],
+    scores: [8.9, 8.6, 9.2, 9.0, 9.3],
+    photoQuery: "Porsche Panamera 971 facelift", logoQuery: "Porsche logo",
     specs: {
       engineEn: "4.0L V8 Turbo E-Hybrid", engineAr: "V8 تيربو هجين 4.0 لتر",
       hp: 680, torque: 930, topSpeed: 315, accel: "3.2", priceEn: "$190,000", priceAr: "190,000 دولار",
@@ -119,7 +115,8 @@ const CARS = [
     brandEn: "Genesis", brandAr: "جينيسيس",
     colorEn: "Vik Black", colorAr: "أسود فيك",
     color: "#101014", colorLight: "#3c3c46", accent: "#a8763e",
-    scores: [9.1, 9.0, 9.2, 9.0, 9.0, 8.9, 9.2, 7.8, 8.2, 9.0, 9.8, 9.0, 8.6, 8.8],
+    scores: [9.1, 9.0, 9.0, 7.9, 8.8],
+    photoQuery: "Genesis G90 2022 sedan", logoQuery: "Genesis Motor logo",
     specs: {
       engineEn: "3.5L V6 Turbo e-Supercharger", engineAr: "V6 تيربو مع شاحن كهربائي 3.5 لتر",
       hp: 409, torque: 549, topSpeed: 250, accel: "5.1", priceEn: "$90,000", priceAr: "90,000 دولار",
@@ -136,7 +133,8 @@ const CARS = [
     brandEn: "Maserati", brandAr: "مازيراتي",
     colorEn: "Rosso Folgore Dark Red", colorAr: "أحمر داكن روسو فولغوري",
     color: "#6e1423", colorLight: "#a2333f", accent: "#123a5f",
-    scores: [8.7, 8.2, 8.1, 9.2, 7.8, 7.9, 8.0, 8.8, 9.2, 8.0, 7.2, 7.5, 9.4, 8.4],
+    scores: [8.7, 8.2, 7.8, 8.8, 8.4],
+    photoQuery: "Maserati Quattroporte VI", logoQuery: "Maserati logo",
     specs: {
       engineEn: "3.8L V8 Twin-Turbo (Trofeo)", engineAr: "V8 مزدوج التيربو 3.8 لتر (تروفيو)",
       hp: 572, torque: 730, topSpeed: 326, accel: "4.5", priceEn: "$150,000", priceAr: "150,000 دولار",
@@ -153,7 +151,8 @@ const CARS = [
     brandEn: "Bentley", brandAr: "بنتلي",
     colorEn: "British Racing Green", colorAr: "أخضر السباقات البريطاني",
     color: "#0b3d2e", colorLight: "#1e6a50", accent: "#d4af37",
-    scores: [9.9, 9.6, 9.6, 9.8, 8.6, 8.5, 9.5, 9.8, 8.9, 9.8, 6.9, 8.7, 9.8, 9.4],
+    scores: [9.9, 9.6, 8.6, 9.8, 9.2],
+    photoQuery: "Bentley Flying Spur 2020", logoQuery: "Bentley logo",
     specs: {
       engineEn: "6.0L W12 Twin-Turbo", engineAr: "W12 مزدوج التيربو 6.0 لتر",
       hp: 626, torque: 900, topSpeed: 333, accel: "3.8", priceEn: "$250,000", priceAr: "250,000 دولار",
@@ -170,7 +169,8 @@ const CARS = [
     brandEn: "Rolls-Royce", brandAr: "رولز-رويس",
     colorEn: "Arctic White", colorAr: "أبيض قطبي",
     color: "#f7f7f4", colorLight: "#ffffff", accent: "#7d6a3a",
-    scores: [10.0, 9.8, 9.9, 9.9, 8.5, 8.6, 9.9, 10.0, 8.4, 9.9, 6.5, 8.8, 10.0, 9.6],
+    scores: [10.0, 9.8, 8.4, 10.0, 9.4],
+    photoQuery: "Rolls-Royce Ghost 2021", logoQuery: "Rolls-Royce Motor Cars logo",
     specs: {
       engineEn: "6.75L V12 Twin-Turbo", engineAr: "V12 مزدوج التيربو 6.75 لتر",
       hp: 563, torque: 850, topSpeed: 250, accel: "4.8", priceEn: "$350,000", priceAr: "350,000 دولار",
@@ -187,7 +187,8 @@ const CARS = [
     brandEn: "Lucid", brandAr: "لوسيد",
     colorEn: "Sapphire Blue", colorAr: "أزرق ياقوتي",
     color: "#1b4a8a", colorLight: "#3f74bd", accent: "#c9d6ea",
-    scores: [8.5, 8.8, 9.0, 8.7, 10.0, 9.3, 8.6, 7.5, 9.4, 8.6, 8.2, 8.2, 8.5, 8.8],
+    scores: [8.5, 8.8, 10.0, 7.3, 8.6],
+    photoQuery: "Lucid Air sedan", logoQuery: "Lucid Motors logo",
     specs: {
       engineEn: "Tri-Motor Electric", engineAr: "كهربائي بثلاثة محركات",
       hp: 1234, torque: 1940, topSpeed: 330, accel: "2.0", priceEn: "$249,000", priceAr: "249,000 دولار",
@@ -214,7 +215,7 @@ const I18N = {
     loading: "جارٍ تجهيز التجربة الفاخرة…",
     heroKicker: "عرض حصري بأسلوب إطلاق عالمي",
     heroTitle: "المقارنة المطلقة لسيارات السيدان الفاخرة",
-    heroSubtitle: "عشر سيارات أسطورية. أربع عشرة معركة. عرش واحد فقط.",
+    heroSubtitle: "عشر سيارات أسطورية. خمس معارك حاسمة. عرش واحد فقط.",
     compareBtn: "قارن السيارات",
     scrollHint: "اكتشف المتنافسات",
     contendersTitle: "المتنافسات على العرش",
@@ -263,7 +264,7 @@ const I18N = {
     loading: "Preparing the luxury experience…",
     heroKicker: "An exclusive keynote-style showcase",
     heroTitle: "Ultimate Luxury Sedan Comparison",
-    heroSubtitle: "Ten legendary sedans. Fourteen battles. Only one throne.",
+    heroSubtitle: "Ten legendary sedans. Five decisive battles. Only one throne.",
     compareBtn: "Compare Cars",
     scrollHint: "Meet the contenders",
     contendersTitle: "Contenders for the Throne",

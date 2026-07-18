@@ -29,12 +29,12 @@ function carSVG(car, uid) {
         <stop offset="1"   stop-color="#fff" stop-opacity="0"/>
       </linearGradient>
       <radialGradient id="floor-${id}" cx="0.5" cy="0.5" r="0.5">
-        <stop offset="0" stop-color="#d4af37" stop-opacity="0.35"/>
-        <stop offset="0.7" stop-color="#d4af37" stop-opacity="0.08"/>
-        <stop offset="1" stop-color="#d4af37" stop-opacity="0"/>
+        <stop offset="0" stop-color="#c9ced6" stop-opacity="0.35"/>
+        <stop offset="0.7" stop-color="#c9ced6" stop-opacity="0.08"/>
+        <stop offset="1" stop-color="#c9ced6" stop-opacity="0"/>
       </radialGradient>
       <radialGradient id="hub-${id}" cx="0.5" cy="0.5" r="0.5">
-        <stop offset="0" stop-color="#f4e3ae"/>
+        <stop offset="0" stop-color="#f2f4f7"/>
         <stop offset="0.35" stop-color="#8f8f96"/>
         <stop offset="1" stop-color="#2a2a30"/>
       </radialGradient>
@@ -74,7 +74,7 @@ function carSVG(car, uid) {
           fill="url(#shine-${id})"/>
 
     <!-- chrome window trim -->
-    <path d="M170 160 C246 112 420 112 488 152" stroke="#e8d9a0" stroke-opacity="0.7"
+    <path d="M170 160 C246 112 420 112 488 152" stroke="#dfe3e9" stroke-opacity="0.7"
           stroke-width="2" fill="none"/>
 
     <!-- headlight & tail-light -->
@@ -84,11 +84,11 @@ function carSVG(car, uid) {
     <path d="M50 196 C48 202 50 208 56 212 L70 210 L68 196 Z" fill="#c22b3a" opacity="0.9"/>
 
     <!-- door handles -->
-    <rect x="246" y="168" width="34" height="5" rx="2.5" fill="#dfd3a8" opacity="0.75"/>
-    <rect x="356" y="168" width="34" height="5" rx="2.5" fill="#dfd3a8" opacity="0.75"/>
+    <rect x="246" y="168" width="34" height="5" rx="2.5" fill="#d7dce2" opacity="0.75"/>
+    <rect x="356" y="168" width="34" height="5" rx="2.5" fill="#d7dce2" opacity="0.75"/>
 
     <!-- rocker chrome -->
-    <rect x="150" y="216" width="360" height="4" rx="2" fill="#cbb26a" opacity="0.45"/>
+    <rect x="150" y="216" width="360" height="4" rx="2" fill="#b6bcc5" opacity="0.45"/>
 
     <!-- wheels -->
     ${wheelSVG(172, 224, id)}
@@ -116,7 +116,7 @@ function wheelSVG(cx, cy, id) {
       <circle cx="${cx}" cy="${cy}" r="42" fill="#101014" stroke="#2c2c34" stroke-width="3"/>
       <circle cx="${cx}" cy="${cy}" r="27" fill="#1b1b22"/>
       <g opacity="0.9">${spokes}</g>
-      <circle cx="${cx}" cy="${cy}" r="8" fill="url(#hub-${id})" stroke="#e8d9a0" stroke-width="1.5"/>
+      <circle cx="${cx}" cy="${cy}" r="8" fill="url(#hub-${id})" stroke="#dfe3e9" stroke-width="1.5"/>
     </g>`;
 }
 
@@ -131,7 +131,7 @@ function shade(hex, pct) {
 }
 
 /* ---------- Brand emblems (stylized, drawn as gold-line SVG) ---------- */
-const GOLD = "#e6c96a";
+const GOLD = "#d9dee5";
 
 const EMBLEMS = {
   /* Mercedes — three-pointed star in a ring */

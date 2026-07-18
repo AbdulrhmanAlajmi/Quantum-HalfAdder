@@ -1,12 +1,11 @@
 # 👑 Ultimate Luxury Sedan Comparison — المقارنة المطلقة لسيارات السيدان الفاخرة
 
 A premium, single-page interactive experience comparing the world's top ten luxury
-executive sedans — styled like an Apple keynote crossed with Top Gear and
-Formula 1 timing graphics. **Arabic by default (RTL)** with a one-click English toggle.
+executive sedans — with a Mercedes-inspired black & chrome design — Apple keynote meets Formula 1 timing graphics. **Arabic by default (RTL)** with a one-click English toggle.
 
 ## ✨ Features
 
-- **14 animated comparison categories** with staggered score bars, smooth counters and per-category winner highlights
+- **5 animated comparison categories** (Luxury, Ride Comfort, Technology, Prestige, Overall) with staggered score bars, smooth counters and per-category winner highlights
 - **Live animated leaderboard** that reorders in real time as points are awarded
 - **Suspenseful finale** — ranks 10 → 4 revealed one by one, then a podium ceremony
 - **Champion celebration** — crown drop, gold glow, confetti bursts, sweeping spotlights and a shine animation for the Mercedes-Benz S-Class
@@ -25,9 +24,10 @@ Formula 1 timing graphics. **Arabic by default (RTL)** with a one-click English 
 
 ## 🛠 Tech
 
-Pure **HTML + CSS + JavaScript** — no frameworks, no build step, no external images.
-Every car render and brand emblem is generated as inline SVG, so the site works fully
-offline (Google Fonts enhance typography when online, with system fallbacks).
+Pure **HTML + CSS + JavaScript** — no frameworks, no build step.
+Real car photos and official brand logos load automatically at runtime from the
+Wikimedia Commons API (CORS, no keys); elegant inline-SVG renders and emblems are the
+automatic fallback, so the site still works fully offline.
 
 ## ▶️ Run
 
@@ -46,6 +46,7 @@ luxury-sedan-comparison/
 ├── css/style.css     # Black & gold theme, glassmorphism, animations
 └── js/
     ├── data.js       # Cars, scores, specs, AR/EN translations
-    ├── visuals.js    # Inline SVG car renders & brand emblems
+    ├── visuals.js    # Inline SVG car renders & brand emblems (fallback)
+    ├── images.js     # Real photos & logos via Wikimedia Commons API
     └── app.js        # Comparison engine, leaderboard, podium, FX
 ```
