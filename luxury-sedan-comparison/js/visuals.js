@@ -160,6 +160,12 @@ const EMBLEMS = {
     <path d="M38 66 L50 88 L62 66 Z" fill="${GOLD}"/>
     <text x="50" y="30" font-size="13" fill="${GOLD}" text-anchor="middle" font-family="Georgia">P</text></svg>`,
 
+  /* Tesla — stylized T */
+  tesla: `<svg viewBox="0 0 100 100">
+    <path d="M50 34 L50 92" stroke="${GOLD}" stroke-width="9" stroke-linecap="round"/>
+    <path d="M10 16 C36 8 64 8 90 16 C88 26 84 30 78 32 C70 26 60 24 50 24 C40 24 30 26 22 32 C16 30 12 26 10 16 Z"
+          fill="${GOLD}"/></svg>`,
+
   /* Genesis — winged shield */
   genesis: `<svg viewBox="0 0 160 70">
     <path d="M80 22 L96 35 L80 48 L64 35 Z" fill="none" stroke="${GOLD}" stroke-width="3.5"/>

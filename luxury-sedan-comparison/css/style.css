@@ -1,25 +1,21 @@
 /* =========================================================
-   Ultimate Luxury Sedan Comparison — Stylesheet
-   Dark-only · Mercedes-inspired Black & Chrome · Glassmorphism
-   (Gold is reserved exclusively for the champion's coronation)
+   Who's the Best Car? — Stylesheet
+   Mercedes-inspired Black & Chrome · one compact screen
+   (Gold is reserved for the winner's coronation)
    ========================================================= */
 
 :root {
   --bg: #050506;
-  --bg-2: #0b0b0f;
-  --gold: #c9ced6;
-  --gold-light: #f4f6f9;
-  --gold-deep: #78808b;
+  --chrome: #c9ced6;
+  --chrome-light: #f4f6f9;
+  --chrome-deep: #78808b;
   --ink: #f2f4f6;
   --muted: #a7acb5;
   --glass: rgba(255, 255, 255, 0.05);
-  --glass-strong: rgba(255, 255, 255, 0.09);
   --glass-border: rgba(206, 212, 221, 0.25);
-  --shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
-  --radius: 22px;
-  --font-latin: "Helvetica Neue", "Segoe UI", Arial, sans-serif;
-  --font-ar: "Cairo", "Segoe UI", Tahoma, sans-serif;
-  --font-ui: "Cairo", "Avenir Next", "Segoe UI", sans-serif;
+  --gold: #d4af37;
+  --gold-light: #f6dc8d;
+  --font-ui: "Cairo", "Segoe UI", Tahoma, sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -37,592 +33,361 @@ body {
   overflow-x: hidden;
   min-height: 100vh;
 }
-html[lang="ar"] body { font-family: var(--font-ar); }
 
 ::selection { background: rgba(206, 212, 221, 0.35); }
 
-h1, h2, h3 { font-weight: 700; letter-spacing: 0.02em; }
-html[lang="en"] h1, html[lang="en"] h2 { font-family: var(--font-latin); }
-
+h1, h2, h3 { font-weight: 800; letter-spacing: 0.01em; }
 img, svg { max-width: 100%; display: block; }
 button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 
 .gold-text {
-  background: linear-gradient(100deg, #8b929c 0%, var(--gold-light) 35%, var(--gold) 55%, #ffffff 75%, #9aa1ab 100%);
+  background: linear-gradient(100deg, #8b929c 0%, var(--chrome-light) 35%, var(--chrome) 55%, #ffffff 75%, #9aa1ab 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: goldShimmer 6s linear infinite;
+  animation: shimmer 6s linear infinite;
 }
-@keyframes goldShimmer { to { background-position: 200% center; } }
+@keyframes shimmer { to { background-position: 200% center; } }
 
-/* ---------- Particle canvas ---------- */
-#particles {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+/* ---------- Background layers ---------- */
+#particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+#confetti { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
+
+.hero-star {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  pointer-events: none; z-index: -1;
 }
+.hero-star svg {
+  width: min(80vmin, 640px); height: min(80vmin, 640px);
+  opacity: 0.05;
+  animation: starSpin 90s linear infinite;
+}
+@keyframes starSpin { to { transform: rotate(360deg); } }
 
 /* ---------- Loading screen ---------- */
 #loader {
   position: fixed; inset: 0; z-index: 100;
   display: grid; place-items: center;
   background: var(--bg);
-  transition: opacity 0.8s var(--ease), visibility 0.8s;
+  transition: opacity 0.7s var(--ease), visibility 0.7s;
 }
 #loader.hidden { opacity: 0; visibility: hidden; }
 .loader-inner { text-align: center; }
 .loader-ring {
-  width: 92px; height: 92px; margin: 0 auto 26px;
+  width: 84px; height: 84px; margin: 0 auto 22px;
   border-radius: 50%;
   border: 2px solid rgba(206, 212, 221, 0.18);
-  border-top-color: var(--gold);
+  border-top-color: var(--chrome);
   animation: spin 1.1s linear infinite;
   position: relative;
 }
 .loader-ring::after {
-  content: "★";
+  content: "🚗";
   position: absolute; inset: 0;
   display: grid; place-items: center;
-  color: var(--gold); font-size: 1.6rem;
+  font-size: 1.6rem;
   animation: spin 1.1s linear infinite reverse;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loader-text { color: var(--muted); letter-spacing: 0.14em; font-size: 0.95rem; }
+.loader-text { color: var(--muted); letter-spacing: 0.1em; font-size: 1rem; }
 
 /* ---------- Top bar ---------- */
 .topbar {
   position: fixed; top: 0; inset-inline: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px clamp(16px, 4vw, 48px);
-  background: linear-gradient(to bottom, rgba(5, 5, 6, 0.85), transparent);
+  padding: 12px clamp(14px, 3vw, 36px);
+  background: linear-gradient(to bottom, rgba(5, 5, 6, 0.9), transparent);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
-.topbar .brand {
-  font-size: 0.85rem; letter-spacing: 0.35em; color: var(--gold);
-  text-transform: uppercase;
-}
-.topbar-actions { display: flex; gap: 10px; }
+.topbar .brand { font-size: 1rem; font-weight: 800; color: var(--chrome); letter-spacing: 0.06em; }
+.topbar-actions { display: flex; gap: 8px; }
 .chip-btn {
-  padding: 9px 20px; border-radius: 999px;
+  padding: 8px 18px; border-radius: 999px;
   border: 1px solid var(--glass-border);
   background: var(--glass);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  color: var(--ink); font-size: 0.9rem; letter-spacing: 0.05em;
+  color: var(--ink); font-size: 0.9rem;
   transition: all 0.35s var(--ease);
 }
 .chip-btn:hover {
   background: rgba(206, 212, 221, 0.16);
-  border-color: var(--gold);
+  border-color: var(--chrome);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(206, 212, 221, 0.2);
 }
 
-/* ---------- Hero ---------- */
-.hero {
+/* ---------- Main: one compact screen ---------- */
+.kid-main {
   position: relative; z-index: 1;
-  min-height: 100vh;
-  display: grid; place-items: center;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 86px clamp(12px, 3vw, 40px) 30px;
   text-align: center;
-  padding: 120px 24px 80px;
 }
-.hero-kicker {
-  color: var(--gold); letter-spacing: 0.4em; text-transform: uppercase;
-  font-size: clamp(0.7rem, 1.4vw, 0.9rem);
-  margin-bottom: 22px;
-  animation: riseIn 1s var(--ease) 0.2s both;
-}
-.hero h1 {
-  font-size: clamp(2.4rem, 6.5vw, 5.4rem);
-  line-height: 1.12;
-  max-width: 18ch; margin-inline: auto;
-  animation: riseIn 1s var(--ease) 0.35s both;
-}
-.hero-sub {
-  margin-top: 24px; color: var(--muted);
-  font-size: clamp(1rem, 2.2vw, 1.4rem);
-  animation: riseIn 1s var(--ease) 0.5s both;
+.kid-main h1 {
+  font-size: clamp(2rem, 5.2vw, 3.6rem);
+  animation: riseIn 0.9s var(--ease) 0.15s both;
 }
 @keyframes riseIn {
-  from { opacity: 0; transform: translateY(34px); }
+  from { opacity: 0; transform: translateY(28px); }
   to { opacity: 1; transform: none; }
 }
 
+.intro { animation: riseIn 0.9s var(--ease) 0.3s both; }
+.hero-sub {
+  margin-top: 8px; color: var(--muted);
+  font-size: clamp(1rem, 2.4vw, 1.3rem);
+}
+body.won .intro { display: none; }
+
 .compare-btn {
-  margin-top: 52px;
+  margin-top: 18px;
   position: relative;
-  padding: 22px 68px;
-  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
-  font-weight: 700; letter-spacing: 0.08em;
+  padding: 16px 52px;
+  font-size: clamp(1.2rem, 2.6vw, 1.55rem);
+  font-weight: 800;
   color: #0b0d10;
-  background: linear-gradient(120deg, #8f97a2, var(--gold) 30%, #f8fafc 50%, var(--gold) 70%, #8f97a2);
+  background: linear-gradient(120deg, #8f97a2, var(--chrome) 30%, #f8fafc 50%, var(--chrome) 70%, #8f97a2);
   background-size: 220% auto;
   border-radius: 999px;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5) inset, 0 18px 50px rgba(206, 212, 221, 0.35);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5) inset, 0 14px 40px rgba(206, 212, 221, 0.35);
   transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), background-position 0.6s;
-  animation: riseIn 1s var(--ease) 0.65s both, btnPulse 3s ease-in-out 1.8s infinite;
+  animation: btnPulse 2.6s ease-in-out 1s infinite;
   overflow: hidden;
 }
-.compare-btn:hover {
-  transform: translateY(-4px) scale(1.03);
+.compare-btn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.04);
   background-position: 100% center;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7) inset, 0 26px 70px rgba(206, 212, 221, 0.5);
 }
+.compare-btn:disabled { opacity: 0.6; cursor: default; animation: none; }
 .compare-btn::after {
   content: ""; position: absolute; inset: 0;
   background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
   transform: translateX(-120%);
-  animation: sheen 3.4s ease 2s infinite;
+  animation: sheen 3s ease 1.6s infinite;
 }
 html[dir="rtl"] .compare-btn::after { animation-name: sheenRtl; }
 @keyframes sheen { 10% { transform: translateX(-120%); } 45%, 100% { transform: translateX(120%); } }
 @keyframes sheenRtl { 10% { transform: translateX(120%); } 45%, 100% { transform: translateX(-120%); } }
 @keyframes btnPulse {
-  0%, 100% { box-shadow: 0 0 0 1px rgba(255,255,255,.5) inset, 0 18px 50px rgba(206,212,221,.35); }
-  50% { box-shadow: 0 0 0 1px rgba(255,255,255,.5) inset, 0 18px 70px rgba(206,212,221,.6); }
+  0%, 100% { box-shadow: 0 0 0 1px rgba(255,255,255,.5) inset, 0 14px 40px rgba(206,212,221,.35); }
+  50% { box-shadow: 0 0 0 1px rgba(255,255,255,.5) inset, 0 14px 60px rgba(206,212,221,.6); }
 }
 
-.scroll-hint {
-  margin-top: 64px; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.2em;
-  animation: riseIn 1s var(--ease) 0.9s both;
+/* ---------- Champion banner (replaces the intro when won) ---------- */
+.champion-block {
+  display: none;
+  animation: riseIn 0.8s var(--ease) both;
 }
-.scroll-hint::after {
-  content: "▾"; display: block; color: var(--gold); font-size: 1.3rem; margin-top: 6px;
-  animation: bob 1.8s ease-in-out infinite;
-}
-@keyframes bob { 50% { transform: translateY(7px); } }
-
-/* ---------- Sections ---------- */
-section { position: relative; z-index: 1; padding: 90px clamp(16px, 5vw, 64px); }
-.section-head { text-align: center; margin-bottom: 56px; }
-.section-head h2 { font-size: clamp(1.8rem, 4.4vw, 3.2rem); }
-.section-head p { color: var(--muted); margin-top: 12px; font-size: 1.05rem; }
-.head-rule {
-  width: 80px; height: 2px; margin: 22px auto 0;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-
-/* ---------- Car cards ---------- */
-.cars-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 26px;
-  max-width: 1500px; margin: 0 auto;
-}
-.car-card {
-  position: relative;
-  border-radius: var(--radius);
-  border: 1px solid var(--glass-border);
-  background: linear-gradient(160deg, var(--glass-strong), rgba(255, 255, 255, 0.02));
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  padding: 26px 24px 24px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease), border-color 0.5s;
-  opacity: 0; transform: translateY(40px);
-}
-.car-card.in-view { opacity: 1; transform: none; }
-.car-card:hover {
-  transform: translateY(-10px);
-  border-color: var(--gold);
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7), 0 0 40px rgba(206, 212, 221, 0.14);
-}
-.car-card::before {
-  content: ""; position: absolute; inset: 0;
-  background: radial-gradient(420px 200px at 50% 0%, rgba(206, 212, 221, 0.12), transparent 70%);
-  opacity: 0; transition: opacity 0.5s;
-}
-.car-card:hover::before { opacity: 1; }
-
-.card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.emblem { display: inline-flex; width: 54px; height: 40px; align-items: center; justify-content: center; }
-.emblem svg { width: 100%; height: 100%; filter: drop-shadow(0 0 6px rgba(206, 212, 221, 0.35)); }
-.card-rank-chip {
-  font-size: 0.72rem; letter-spacing: 0.18em; color: var(--gold);
-  border: 1px solid var(--glass-border); border-radius: 999px; padding: 5px 12px;
-  text-transform: uppercase;
-}
-.car-card .car-render { margin: 14px auto 6px; transition: transform 0.6s var(--ease); }
-.car-card:hover .car-render { transform: scale(1.05) translateX(6px); }
-html[dir="rtl"] .car-card:hover .car-render { transform: scale(1.05) translateX(-6px); }
-.car-card h3 { font-size: 1.25rem; margin-top: 6px; }
-.card-color { display: flex; align-items: center; gap: 9px; margin-top: 9px; color: var(--muted); font-size: 0.88rem; }
-.swatch {
-  width: 15px; height: 15px; border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6) inset;
-}
-.card-cta {
-  margin-top: 14px; font-size: 0.82rem; color: var(--gold);
-  letter-spacing: 0.12em; opacity: 0; transform: translateY(6px);
+body.won .champion-block { display: block; }
+.champion-block h2 { font-size: clamp(1.7rem, 4.6vw, 3rem); }
+.champion-block p { color: var(--muted); margin-top: 6px; font-size: clamp(0.95rem, 2.2vw, 1.2rem); }
+.replay-btn {
+  margin-top: 14px;
+  padding: 12px 36px; border-radius: 999px;
+  border: 1px solid var(--gold);
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--gold-light); font-size: 1.05rem; font-weight: 700;
   transition: all 0.4s var(--ease);
 }
-.car-card:hover .card-cta { opacity: 1; transform: none; }
-
-/* ---------- Arena ---------- */
-#arena { display: none; }
-#arena.active { display: block; }
-
-.arena-shell {
-  max-width: 1500px; margin: 0 auto;
-  display: grid; grid-template-columns: 1fr 360px; gap: 26px;
-  align-items: start;
-}
-.glass-panel {
-  border-radius: var(--radius);
-  border: 1px solid var(--glass-border);
-  background: linear-gradient(160deg, var(--glass-strong), rgba(255, 255, 255, 0.02));
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow: var(--shadow);
-  padding: 28px;
+.replay-btn:hover {
+  background: rgba(212, 175, 55, 0.24);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 34px rgba(212, 175, 55, 0.3);
 }
 
-.category-banner {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; flex-wrap: wrap; margin-bottom: 24px;
-}
-.category-title {
-  display: flex; align-items: center; gap: 14px;
-  font-size: clamp(1.3rem, 3vw, 2rem); font-weight: 700;
-}
-.category-title .cat-icon {
-  display: grid; place-items: center;
-  width: 52px; height: 52px; border-radius: 14px;
-  background: rgba(206, 212, 221, 0.12);
-  border: 1px solid var(--glass-border);
-  font-size: 1.5rem;
-}
-.category-progress { color: var(--muted); font-size: 0.95rem; letter-spacing: 0.1em; }
-.progress-track {
-  grid-column: 1 / -1; width: 100%;
-  height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.08);
-  overflow: hidden; margin-top: 4px;
-}
-.progress-fill {
-  height: 100%; width: 0;
-  background: linear-gradient(90deg, var(--gold-deep), var(--gold-light));
-  transition: width 0.6s var(--ease);
+.tap-hint {
+  margin-top: 18px; color: var(--muted); font-size: 0.9rem;
+  animation: riseIn 0.9s var(--ease) 0.6s both;
 }
 
-.cat-anim { animation: catPop 0.55s var(--ease); }
-@keyframes catPop {
-  0% { opacity: 0; transform: translateY(18px) scale(0.96); }
-  100% { opacity: 1; transform: none; }
+/* ---------- The five car cards ---------- */
+.fifa-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+  margin-top: 40px; /* room for the crown */
+}
+.fifa-card {
+  position: relative;
+  border-radius: 18px;
+  padding: 14px 12px 12px;
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(165deg, rgba(34, 37, 43, 0.96), rgba(12, 13, 16, 0.98)) padding-box,
+    linear-gradient(155deg, #f4f6f9, #565c66 45%, #aab2bd 70%, #f4f6f9) border-box;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  animation: cardDeal 0.55s var(--ease) both;
+  transition: box-shadow 0.4s var(--ease);
+}
+.fifa-card:hover { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 26px rgba(206, 212, 221, 0.12); }
+@keyframes cardDeal {
+  from { opacity: 0; transform: translateY(30px) scale(0.94); }
+  to { opacity: 1; transform: none; }
 }
 
-/* score bars */
-.bars { display: grid; gap: 12px; }
-.bar-row {
-  display: grid; grid-template-columns: 190px 1fr 64px;
-  align-items: center; gap: 14px;
+.fifa-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.fifa-ovr { text-align: center; line-height: 1; }
+.fifa-ovr .num {
+  display: block; font-size: 2rem; font-weight: 800;
+  color: var(--chrome-light); font-variant-numeric: tabular-nums;
 }
-.bar-label { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; }
-.bar-label .dot {
-  width: 12px; height: 12px; border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.35); flex: none;
+.fifa-ovr .lbl { font-size: 0.58rem; letter-spacing: 0.28em; color: var(--muted); }
+
+.emblem { display: inline-flex; width: 52px; height: 38px; align-items: center; justify-content: center; }
+.emblem svg { width: 100%; height: 100%; filter: drop-shadow(0 0 6px rgba(206, 212, 221, 0.35)); }
+.emblem img.brand-logo {
+  max-height: 38px; max-width: 100%; width: auto; object-fit: contain;
+  background: rgba(248, 250, 252, 0.94);
+  padding: 4px 8px; border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
+
+.car-media { position: relative; margin: 10px auto 4px; }
+.car-media img.car-photo {
+  width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  background: #101216;
+  transition: transform 0.5s var(--ease);
+}
+.fifa-card:hover .car-media img.car-photo { transform: scale(1.04); }
+
+.fifa-card h3 { font-size: 0.95rem; margin-top: 6px; }
+
+.fifa-stats { display: grid; gap: 6px; margin-top: 10px; }
+.fstat {
+  display: grid; grid-template-columns: 24px 1fr 30px;
+  align-items: center; gap: 7px; font-size: 0.85rem;
+}
+.fstat .fs-icon { font-size: 0.95rem; }
 .bar-track {
-  height: 16px; border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
+  height: 9px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
 }
 .bar-fill {
   height: 100%; width: 0; border-radius: 999px;
-  background: linear-gradient(90deg, #5a616b, #aab2bd);
-  transition: width 0.9s var(--ease);
-  position: relative;
+  background: linear-gradient(90deg, #9aa1ab, #f4f6f9);
+  box-shadow: 0 0 8px rgba(206, 212, 221, 0.35);
+  transition: width 0.7s var(--ease);
 }
-html[dir="rtl"] .bar-fill { background: linear-gradient(-90deg, #5a616b, #aab2bd); }
-.bar-row.winner .bar-fill {
-  background: linear-gradient(90deg, var(--gold-deep), var(--gold), var(--gold-light));
-  box-shadow: 0 0 18px rgba(206, 212, 221, 0.6);
+html[dir="rtl"] .bar-fill { background: linear-gradient(-90deg, #9aa1ab, #f4f6f9); }
+.fifa-card.champ .bar-fill {
+  background: linear-gradient(90deg, #b8912e, #f6dc8d);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 }
-.bar-row.winner .bar-label { color: var(--gold-light); }
-.bar-row.winner { animation: winnerFlash 0.8s var(--ease); }
-@keyframes winnerFlash { 30% { transform: scale(1.02); } }
-.bar-score {
-  font-variant-numeric: tabular-nums; text-align: end;
-  color: var(--muted); font-size: 0.95rem;
-}
-.bar-row.winner .bar-score { color: var(--gold-light); font-weight: 700; }
-.win-badge {
-  font-size: 0.68rem; color: #0b0d10; background: var(--gold);
-  padding: 2px 8px; border-radius: 999px; margin-inline-start: 6px;
-  animation: catPop 0.4s var(--ease);
+html[dir="rtl"] .fifa-card.champ .bar-fill { background: linear-gradient(-90deg, #b8912e, #f6dc8d); }
+.fstat .fs-val {
+  font-weight: 800; color: var(--chrome-light); text-align: end;
+  font-variant-numeric: tabular-nums;
 }
 
-/* live standings */
-.standings h3 {
-  font-size: 1.1rem; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--gold); margin-bottom: 18px; text-align: center;
-}
-.standings-list { position: relative; }
-.standing-row {
-  position: absolute; inset-inline: 0;
-  display: grid; grid-template-columns: 30px 1fr auto;
-  align-items: center; gap: 10px;
-  height: 44px; padding: 0 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid transparent;
-  transition: transform 0.7s var(--ease), background 0.4s, border-color 0.4s;
-  font-size: 0.9rem;
-}
-.standing-row .pos {
-  font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums;
-}
-.standing-row .pts {
-  font-variant-numeric: tabular-nums; color: var(--gold-light); font-weight: 700;
-}
-.standing-row.top1 {
-  background: linear-gradient(90deg, rgba(212, 175, 55, 0.20), rgba(212, 175, 55, 0.04));
-  border-color: #d4af37;
-}
-.standing-row.top1 .pos { color: #d4af37; }
-.standing-row .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-.skip-wrap { text-align: center; margin-top: 26px; }
-
-/* ---------- Finale ---------- */
-#finale { display: none; min-height: 100vh; }
-#finale.active { display: block; }
-
-.suspense-title {
-  text-align: center; font-size: clamp(1.6rem, 4vw, 2.6rem);
-  letter-spacing: 0.1em; margin-bottom: 40px;
-  animation: suspensePulse 1.6s ease-in-out infinite;
-}
-@keyframes suspensePulse { 50% { opacity: 0.55; } }
-
-.reveal-list {
-  max-width: 760px; margin: 0 auto 60px; display: grid; gap: 12px;
-}
-.reveal-row {
-  display: grid; grid-template-columns: 56px 54px 1fr auto;
-  align-items: center; gap: 14px;
-  padding: 13px 20px;
-  border-radius: 16px;
-  border: 1px solid var(--glass-border);
-  background: var(--glass);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  opacity: 0; transform: translateY(26px) scale(0.97);
-  transition: all 0.6s var(--ease);
-}
-.reveal-row.shown { opacity: 1; transform: none; }
-.reveal-row .rr-pos { font-size: 1.25rem; font-weight: 700; color: var(--muted); }
-.reveal-row .pts { color: var(--gold-light); font-variant-numeric: tabular-nums; font-weight: 700; }
-
-/* podium */
-.podium-stage {
-  position: relative;
-  max-width: 1100px; margin: 0 auto; padding: 40px 10px 30px;
-}
-.spotlights { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.spot {
-  position: absolute; top: -12%; width: 220px; height: 130%;
-  background: linear-gradient(to bottom, rgba(240, 245, 252, 0.20), transparent 75%);
-  clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
-  transform-origin: top center;
-  filter: blur(3px);
-  opacity: 0; transition: opacity 1s;
-}
-.finale-won .spot { opacity: 1; }
-.spot.s1 { left: 12%; animation: sweep 5.5s ease-in-out infinite alternate; }
-.spot.s2 { right: 12%; animation: sweep 5.5s ease-in-out infinite alternate-reverse; }
-@keyframes sweep { from { transform: rotate(-14deg); } to { transform: rotate(14deg); } }
-
-.podium {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  align-items: end; gap: 20px;
-  direction: ltr; /* fixed visual layout: BMW left, Merc center, Rolls right */
-}
-.podium-slot { text-align: center; opacity: 0; transform: translateY(70px); transition: all 0.9s var(--ease); }
-.podium-slot.shown { opacity: 1; transform: none; }
-.podium-car { position: relative; margin-bottom: -6px; }
-.podium-car .car-render { width: min(100%, 320px); margin: 0 auto; }
-.podium-slot .p-name { font-weight: 700; font-size: 1.05rem; margin: 4px 0 2px; }
-.podium-slot .p-pts { color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
-.podium-block {
-  margin-top: 14px;
-  border-radius: 14px 14px 0 0;
-  border: 1px solid var(--glass-border); border-bottom: none;
-  background: linear-gradient(180deg, rgba(206, 212, 221, 0.2), rgba(206, 212, 221, 0.04));
+/* rank medal badge */
+.rank-badge {
+  position: absolute; top: -14px; inset-inline-start: -8px;
+  min-width: 44px; height: 44px; padding: 0 6px; border-radius: 50%;
   display: grid; place-items: center;
-  font-size: 2.2rem; font-weight: 800; color: var(--gold);
-  text-shadow: 0 2px 14px rgba(206, 212, 221, 0.5);
-}
-.slot-1 .podium-block {
-  height: 190px;
-  background: linear-gradient(180deg, rgba(212, 175, 55, 0.28), rgba(212, 175, 55, 0.05));
-  border-color: rgba(212, 175, 55, 0.55);
-  color: #d4af37;
-}
-.slot-2 .podium-block { height: 138px; }
-.slot-3 .podium-block { height: 104px; }
-
-/* champion effects */
-.crown {
-  position: absolute; left: 50%; top: -34px;
-  transform: translateX(-50%) translateY(-110px) rotate(-14deg);
-  font-size: 3.2rem; opacity: 0;
-  filter: drop-shadow(0 6px 18px rgba(212, 175, 55, 0.85));
-  transition: all 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-size: 1.35rem; font-weight: 800; color: #0b0d10;
+  background: linear-gradient(150deg, #f8fafc, #9aa1ab);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+  transform: scale(0);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 3;
 }
-.finale-won .crown { opacity: 1; transform: translateX(-50%) translateY(0) rotate(0); }
+.fifa-grid.ranked .rank-badge { transform: scale(1); }
 
-.champion-glow {
-  position: absolute; inset: -30px -20px;
-  background: radial-gradient(closest-side, rgba(212, 175, 55, 0.38), transparent 75%);
-  opacity: 0; transition: opacity 1.2s; pointer-events: none;
-  animation: glowBreathe 3s ease-in-out infinite;
+/* winner card: gold frame + crown */
+.fifa-card.champ {
+  background:
+    linear-gradient(165deg, rgba(44, 38, 22, 0.97), rgba(14, 12, 6, 0.98)) padding-box,
+    linear-gradient(155deg, #f6dc8d, #8a6d1d 45%, #d4af37 70%, #f6dc8d) border-box;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.65), 0 0 40px rgba(212, 175, 55, 0.30);
 }
-.finale-won .champion-glow { opacity: 1; }
-@keyframes glowBreathe { 50% { transform: scale(1.12); } }
-
-.slot-1 .podium-car::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.35) 50%, transparent 65%);
-  transform: translateX(-130%); pointer-events: none; opacity: 0;
+.fifa-card.champ .rank-badge {
+  background: linear-gradient(150deg, #f6dc8d, #d4af37);
+  box-shadow: 0 8px 22px rgba(212, 175, 55, 0.5);
 }
-.finale-won .slot-1 .podium-car::after { opacity: 1; animation: sheen 2.8s ease 0.5s infinite; }
-
-.champion-titles { text-align: center; margin-top: 54px; opacity: 0; transform: translateY(30px); transition: all 1s var(--ease) 0.3s; }
-.finale-won .champion-titles { opacity: 1; transform: none; }
-.champion-titles h2 { font-size: clamp(2rem, 5.4vw, 4rem); }
-.champion-titles p { color: var(--muted); margin-top: 16px; font-size: clamp(1rem, 2.2vw, 1.3rem); }
-
-.replay-wrap { text-align: center; margin-top: 44px; opacity: 0; transition: opacity 1s 1s; }
-.finale-won .replay-wrap { opacity: 1; }
-.replay-btn {
-  padding: 15px 44px; border-radius: 999px;
-  border: 1px solid var(--gold);
-  background: rgba(206, 212, 221, 0.1);
-  color: var(--gold-light); font-size: 1.05rem; letter-spacing: 0.06em;
-  transition: all 0.4s var(--ease);
+.fifa-card.champ .fifa-ovr .num { color: var(--gold-light); }
+.crown-mini {
+  position: absolute; top: -44px; left: 50%;
+  transform: translateX(-50%) translateY(-30px) rotate(-14deg);
+  font-size: 2.4rem; opacity: 0; z-index: 4;
+  filter: drop-shadow(0 6px 16px rgba(212, 175, 55, 0.85));
+  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+  pointer-events: none;
 }
-.replay-btn:hover {
-  background: rgba(206, 212, 221, 0.22);
-  transform: translateY(-3px);
-  box-shadow: 0 14px 40px rgba(206, 212, 221, 0.3);
-}
+.fifa-card.champ .crown-mini { opacity: 1; transform: translateX(-50%) rotate(0); }
 
-/* full ranking under podium */
-.final-table {
-  max-width: 760px; margin: 70px auto 0;
-  opacity: 0; transition: opacity 1s 1.4s;
-}
-.finale-won .final-table { opacity: 1; }
-.final-table h3 { text-align: center; color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 20px; }
-
-#confetti {
-  position: fixed; inset: 0; z-index: 60; pointer-events: none;
-}
-
-/* ---------- Modal ---------- */
+/* ---------- Car popup ---------- */
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 80;
-  background: rgba(2, 2, 3, 0.72);
+  background: rgba(2, 2, 3, 0.74);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   display: grid; place-items: center;
-  padding: 22px;
+  padding: 18px;
   opacity: 0; visibility: hidden;
-  transition: opacity 0.45s var(--ease), visibility 0.45s;
+  transition: opacity 0.4s var(--ease), visibility 0.4s;
 }
 .modal-backdrop.open { opacity: 1; visibility: visible; }
 .modal {
-  width: min(960px, 100%);
-  max-height: 90vh; overflow-y: auto;
-  border-radius: 26px;
+  width: min(680px, 100%);
+  max-height: 92vh; overflow-y: auto;
+  border-radius: 24px;
   border: 1px solid var(--glass-border);
-  background: linear-gradient(165deg, rgba(28, 26, 20, 0.92), rgba(8, 8, 10, 0.95));
-  box-shadow: var(--shadow), 0 0 80px rgba(206, 212, 221, 0.1);
-  padding: clamp(22px, 4vw, 44px);
-  transform: translateY(36px) scale(0.96);
-  transition: transform 0.5s var(--ease);
+  background: linear-gradient(165deg, rgba(30, 32, 38, 0.95), rgba(8, 8, 10, 0.97));
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+  padding: clamp(18px, 3.5vw, 34px);
+  transform: translateY(30px) scale(0.96);
+  transition: transform 0.45s var(--ease);
 }
 .modal-backdrop.open .modal { transform: none; }
-.modal::-webkit-scrollbar { width: 8px; }
-.modal::-webkit-scrollbar-thumb { background: rgba(206, 212, 221, 0.35); border-radius: 8px; }
-
 .modal-close {
   position: sticky; top: 0; float: inline-end;
-  width: 42px; height: 42px; border-radius: 50%;
+  width: 40px; height: 40px; border-radius: 50%;
   border: 1px solid var(--glass-border);
   background: var(--glass); color: var(--ink);
-  font-size: 1.1rem; z-index: 2;
+  font-size: 1.05rem; z-index: 2;
   transition: all 0.3s;
 }
-.modal-close:hover { border-color: var(--gold); color: var(--gold); transform: rotate(90deg); }
+.modal-close:hover { border-color: var(--chrome); transform: rotate(90deg); }
 
 .modal-hero { text-align: center; }
-.modal-hero .emblem { width: 84px; height: 58px; margin: 0 auto; }
-.modal-hero .car-render { width: min(100%, 520px); margin: 8px auto 0; }
-.modal-hero h2 { font-size: clamp(1.6rem, 4vw, 2.5rem); margin-top: 2px; }
-.modal-hero .m-color { color: var(--muted); margin-top: 8px; display: inline-flex; align-items: center; gap: 8px; }
+.modal-hero .emblem { width: 76px; height: 52px; margin: 0 auto; }
+.modal-hero .emblem img.brand-logo { max-height: 48px; }
+.modal-hero .car-media { width: min(100%, 520px); margin: 10px auto 0; }
+.modal-hero h2 { font-size: clamp(1.4rem, 3.6vw, 2.1rem); margin-top: 8px; }
+.modal-ovr { margin-top: 6px; color: var(--muted); font-size: 0.95rem; letter-spacing: 0.15em; }
+.modal-ovr span { font-size: 1.9rem; font-weight: 800; color: var(--chrome-light); letter-spacing: 0; }
 
-.spec-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 14px; margin-top: 30px;
+.modal-stats { display: grid; gap: 11px; margin-top: 22px; }
+.mstat {
+  display: grid; grid-template-columns: 30px 88px 1fr 36px;
+  align-items: center; gap: 10px; font-size: 0.95rem;
 }
-.spec-cell {
-  border-radius: 16px; padding: 16px 14px; text-align: center;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.35s var(--ease);
-}
-.spec-cell:hover { border-color: var(--glass-border); transform: translateY(-3px); }
-.spec-cell .sv { font-size: 1.35rem; font-weight: 800; color: var(--gold-light); font-variant-numeric: tabular-nums; }
-.spec-cell .sk { color: var(--muted); font-size: 0.78rem; margin-top: 5px; letter-spacing: 0.06em; }
+.mstat .ms-icon { font-size: 1.2rem; }
+.mstat .ms-name { color: var(--muted); }
+.mstat .bar-track { height: 12px; }
+.mstat .ms-val { color: var(--chrome-light); text-align: end; font-variant-numeric: tabular-nums; }
 
-.pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 26px; }
-.pc-box {
-  border-radius: 16px; padding: 18px 20px;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-.pc-box h4 { margin-bottom: 12px; letter-spacing: 0.08em; }
-.pc-box.pros h4 { color: #9fd8a4; }
-.pc-box.cons h4 { color: #d89f9f; }
-.pc-box li { list-style: none; padding: 5px 0; color: var(--muted); font-size: 0.92rem; }
-.pc-box li::before { content: "•"; color: var(--gold); margin-inline-end: 9px; }
-
-.modal-scores { display: grid; gap: 13px; margin-top: 28px; }
-.mscore { display: grid; grid-template-columns: 130px 1fr 56px; align-items: center; gap: 12px; font-size: 0.92rem; }
-.mscore .bar-track { height: 12px; }
-
-/* ---------- Footer ---------- */
-footer {
-  position: relative; z-index: 1;
-  text-align: center; padding: 44px 20px 34px;
-  color: var(--muted); font-size: 0.85rem; letter-spacing: 0.14em;
-  border-top: 1px solid rgba(206, 212, 221, 0.12);
-}
-
-/* ---------- Responsive ---------- */
+/* ---------- Responsive: stays short ---------- */
 @media (max-width: 1080px) {
-  .arena-shell { grid-template-columns: 1fr; }
-  .standings-list { min-height: 0; }
+  .fifa-grid { grid-template-columns: repeat(3, 1fr); }
 }
-@media (max-width: 720px) {
-  .bar-row { grid-template-columns: 120px 1fr 48px; gap: 9px; }
-  .bar-label { font-size: 0.78rem; }
-  .bar-label .dot { display: none; }
-  .podium { gap: 8px; }
-  .slot-1 .podium-block { height: 130px; }
-  .slot-2 .podium-block { height: 95px; }
-  .slot-3 .podium-block { height: 72px; }
-  .crown { font-size: 2.2rem; }
-  .pros-cons { grid-template-columns: 1fr; }
-  .reveal-row { grid-template-columns: 44px 1fr auto; }
-  .reveal-row .emblem { display: none; }
-  .topbar .brand { display: none; }
+@media (max-width: 680px) {
+  .fifa-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .kid-main { padding-top: 76px; }
+  .fifa-card h3 { font-size: 0.85rem; }
+  .fstat { grid-template-columns: 20px 1fr 26px; font-size: 0.78rem; }
+  .mstat { grid-template-columns: 26px 74px 1fr 32px; font-size: 0.85rem; }
+  .topbar .brand { font-size: 0.85rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -631,142 +396,4 @@ footer {
     animation-iteration-count: 1 !important;
     transition-duration: 0.15s !important;
   }
-}
-
-
-/* ---------- Mercedes-inspired accents ---------- */
-.hero-star {
-  position: absolute; inset: 0; display: grid; place-items: center;
-  pointer-events: none; z-index: -1;
-}
-.hero-star svg {
-  width: min(88vmin, 780px); height: min(88vmin, 780px);
-  opacity: 0.055;
-  animation: starSpin 90s linear infinite;
-}
-@keyframes starSpin { to { transform: rotate(360deg); } }
-
-/* ---------- Real photos & brand logos ---------- */
-.car-media { position: relative; margin: 14px auto 6px; }
-.car-media img.car-photo {
-  width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
-  transition: transform 0.6s var(--ease);
-  background: #101216;
-}
-.car-card:hover .car-media img.car-photo { transform: scale(1.04); }
-.modal-hero .car-media { width: min(100%, 560px); margin: 12px auto 0; }
-.emblem img.brand-logo {
-  max-height: 40px; max-width: 100%; width: auto; object-fit: contain;
-  background: rgba(248, 250, 252, 0.94);
-  padding: 5px 9px; border-radius: 9px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-}
-.modal-hero .emblem { height: auto; }
-.modal-hero .emblem img.brand-logo { max-height: 52px; }
-.reveal-row .emblem img.brand-logo { max-height: 30px; }
-.podium-car .car-media { width: min(100%, 330px); margin: 0 auto; }
-
-
-/* ---------- FIFA-style comparison cards ---------- */
-.fifa-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 24px;
-  max-width: 1500px; margin: 0 auto;
-  padding-top: 46px; /* room for the champion's crown */
-}
-.fifa-card {
-  position: relative;
-  border-radius: 18px;
-  padding: 18px 16px 16px;
-  border: 1.5px solid transparent;
-  background:
-    linear-gradient(165deg, rgba(34, 37, 43, 0.96), rgba(12, 13, 16, 0.98)) padding-box,
-    linear-gradient(155deg, #f4f6f9, #565c66 45%, #aab2bd 70%, #f4f6f9) border-box;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
-  cursor: pointer;
-  animation: cardDeal 0.6s var(--ease) both;
-  transition: box-shadow 0.4s var(--ease);
-}
-.fifa-card:hover { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(206, 212, 221, 0.12); }
-@keyframes cardDeal {
-  from { opacity: 0; transform: translateY(36px) scale(0.94); }
-  to { opacity: 1; transform: none; }
-}
-
-.fifa-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.fifa-ovr { text-align: center; line-height: 1; }
-.fifa-ovr .num {
-  display: block; font-size: 2.3rem; font-weight: 800;
-  color: var(--gold-light); font-variant-numeric: tabular-nums;
-}
-.fifa-ovr .lbl { font-size: 0.62rem; letter-spacing: 0.3em; color: var(--muted); }
-.fifa-card .car-media { margin: 12px auto 4px; }
-.fifa-card h3 { text-align: center; font-size: 1.02rem; margin-top: 8px; }
-
-.fifa-stats { display: grid; gap: 8px; margin-top: 12px; }
-.fstat {
-  display: grid; grid-template-columns: 92px 1fr 34px;
-  align-items: center; gap: 8px; font-size: 0.78rem;
-}
-.fstat .fs-label { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fstat .bar-track { height: 9px; }
-.fstat .fs-val {
-  font-weight: 700; color: var(--gold-light); text-align: end;
-  font-variant-numeric: tabular-nums;
-}
-
-/* rank badge (revealed when the grid enters ranked state) */
-.rank-badge {
-  position: absolute; top: -15px; inset-inline-start: -10px;
-  width: 46px; height: 46px; border-radius: 50%;
-  display: grid; place-items: center;
-  font-size: 1.3rem; font-weight: 800; color: #0b0d10;
-  background: linear-gradient(150deg, #f8fafc, #9aa1ab);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
-  transform: scale(0);
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 3;
-}
-.fifa-grid.ranked .rank-badge { transform: scale(1); }
-
-/* champion card: gold frame, glow, crown */
-.fifa-card.champ {
-  background:
-    linear-gradient(165deg, rgba(44, 38, 22, 0.97), rgba(14, 12, 6, 0.98)) padding-box,
-    linear-gradient(155deg, #f6dc8d, #8a6d1d 45%, #d4af37 70%, #f6dc8d) border-box;
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.65), 0 0 46px rgba(212, 175, 55, 0.30);
-}
-.fifa-card.champ .rank-badge {
-  background: linear-gradient(150deg, #f6dc8d, #d4af37);
-  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.5);
-}
-.fifa-card.champ .fifa-ovr .num { color: #f6dc8d; }
-.crown-mini {
-  position: absolute; top: -46px; left: 50%;
-  transform: translateX(-50%) translateY(-36px) rotate(-14deg);
-  font-size: 2.6rem; opacity: 0; z-index: 4;
-  filter: drop-shadow(0 6px 16px rgba(212, 175, 55, 0.85));
-  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s;
-  pointer-events: none;
-}
-.fifa-card.champ .crown-mini { opacity: 1; transform: translateX(-50%) rotate(0); }
-
-/* champion block under the ranked grid */
-.champion-block {
-  text-align: center; margin-top: 72px;
-  opacity: 0; transform: translateY(26px);
-  transition: all 0.9s var(--ease) 0.4s;
-  pointer-events: none;
-}
-#arena.won .champion-block { opacity: 1; transform: none; pointer-events: auto; }
-.champion-block h2 { font-size: clamp(1.9rem, 5vw, 3.6rem); }
-.champion-block p { color: var(--muted); margin-top: 14px; font-size: clamp(1rem, 2.2vw, 1.25rem); }
-.champion-block .replay-wrap { opacity: 1; margin-top: 34px; }
-
-@media (max-width: 480px) {
-  .fstat { grid-template-columns: 78px 1fr 30px; font-size: 0.72rem; }
 }
