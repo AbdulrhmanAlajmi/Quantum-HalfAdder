@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>المقارنة المطلقة لسيارات السيدان الفاخرة | Ultimate Luxury Sedan Comparison</title>
-  <meta name="description" content="مقارنة تفاعلية فاخرة بين أفضل عشر سيارات سيدان تنفيذية في العالم — An interactive premium comparison of the world's top luxury executive sedans." />
+  <title>مين أفضل سيارة؟ | Who's the Best Car?</title>
+  <meta name="description" content="مقارنة سهلة وممتعة بين خمس سيارات — اضغط زرًا واحدًا واعرف مَن الأفضل! A fun one-tap comparison of five cars." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet" />
@@ -13,28 +13,28 @@
 </head>
 <body>
 
-  <!-- Ambient gold particle background -->
+  <!-- Ambient chrome particles -->
   <canvas id="particles" aria-hidden="true"></canvas>
 
   <!-- Loading screen -->
   <div id="loader" aria-hidden="true">
     <div class="loader-inner">
       <div class="loader-ring"></div>
-      <div class="loader-text" data-i18n="loading">جارٍ تجهيز التجربة الفاخرة…</div>
+      <div class="loader-text" data-i18n="loading">لحظة… نجهّز السيارات 🚗</div>
     </div>
   </div>
 
   <!-- Top bar -->
   <header class="topbar">
-    <div class="brand" data-i18n="brand">المقارنة المطلقة</div>
+    <div class="brand" data-i18n="brand">🚗 مين الأفضل؟</div>
     <div class="topbar-actions">
       <button id="sound-btn" class="chip-btn" aria-label="Sound on/off">🔊</button>
       <button id="lang-btn" class="chip-btn" data-i18n="langButton">English</button>
     </div>
   </header>
 
-  <!-- Hero -->
-  <section class="hero">
+  <!-- One compact screen -->
+  <main class="kid-main">
     <div class="hero-star" aria-hidden="true">
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <circle cx="50" cy="50" r="46" fill="none" stroke="#cfd4dc" stroke-width="1.6"/>
@@ -42,55 +42,35 @@
               d="M50 4 L54 44 L89.8 73 L55 52.5 L50 96 L45 52.5 L10.2 73 L46 44 Z"/>
       </svg>
     </div>
-    <div>
-      <div class="hero-kicker" data-i18n="heroKicker">عرض حصري بأسلوب إطلاق عالمي</div>
-      <h1 class="gold-text" data-i18n="heroTitle">المقارنة المطلقة لسيارات السيدان الفاخرة</h1>
-      <p class="hero-sub" data-i18n="heroSubtitle">عشر سيارات أسطورية. خمس معارك حاسمة. عرش واحد فقط.</p>
-      <button id="compare-btn" class="compare-btn" data-i18n="compareBtn">قارن السيارات</button>
-      <div class="scroll-hint" data-i18n="scrollHint">اكتشف المتنافسات</div>
-    </div>
-  </section>
 
-  <!-- Contenders -->
-  <section id="contenders">
-    <div class="section-head">
-      <h2 class="gold-text" data-i18n="contendersTitle">المتنافسات على العرش</h2>
-      <p data-i18n="contendersSub">اضغط على أي سيارة لعرض مواصفاتها الكاملة</p>
-      <div class="head-rule"></div>
-    </div>
-    <div id="cars-grid" class="cars-grid"></div>
-  </section>
+    <h1 class="gold-text" data-i18n="heroTitle">مين أفضل سيارة؟</h1>
 
-  <!-- Comparison arena: FIFA-style cards → animated 1–10 ranking -->
-  <section id="arena">
-    <div class="section-head">
-      <h2 class="gold-text" data-i18n="arenaTitle">حلبة المقارنة</h2>
-      <div class="head-rule"></div>
+    <div id="intro" class="intro">
+      <p class="hero-sub" data-i18n="heroSubtitle">خمس سيارات… وواحدة فقط تفوز!</p>
+      <button id="compare-btn" class="compare-btn" data-i18n="compareBtn">🏁 ابدأ المقارنة!</button>
+    </div>
+
+    <div id="champion-block" class="champion-block">
+      <h2 class="gold-text" data-i18n="championTitle">مرسيدس هي الأفضل! 👑</h2>
+      <p data-i18n="championSubtitle">جمعت أعلى النقاط وفازت بالتاج!</p>
+      <button id="replay-btn" class="replay-btn" data-i18n="replay">🔁 العب من جديد</button>
     </div>
 
     <div id="fifa-grid" class="fifa-grid"></div>
 
-    <div id="champion-block" class="champion-block">
-      <h2 class="gold-text" data-i18n="championTitle">ملكة سيارات السيدان الفاخرة</h2>
-      <p data-i18n="championSubtitle">مرسيدس-بنز الفئة S تبقى المعيار الأعلى للفخامة التنفيذية.</p>
-      <div class="replay-wrap">
-        <button id="replay-btn" class="replay-btn" data-i18n="replay">🔁 إعادة المقارنة</button>
-      </div>
-    </div>
-  </section>
+    <p class="tap-hint" data-i18n="tapHint">اضغط أي سيارة لتكبيرها 👆</p>
+  </main>
 
   <!-- Confetti overlay -->
   <canvas id="confetti" aria-hidden="true"></canvas>
 
-  <!-- Car detail modal -->
+  <!-- Car popup: big photo + scores -->
   <div id="modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal">
-      <button id="modal-close" class="modal-close" data-i18n-label="close" aria-label="Close">✕</button>
+      <button id="modal-close" class="modal-close" aria-label="Close">✕</button>
       <div id="modal-content"></div>
     </div>
   </div>
-
-  <footer data-i18n="footer">تجربة رقمية فاخرة · صُممت بشغف</footer>
 
   <script src="js/data.js"></script>
   <script src="js/visuals.js"></script>

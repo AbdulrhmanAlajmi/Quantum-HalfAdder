@@ -1,7 +1,7 @@
 /* =========================================================
-   Ultimate Luxury Sedan Comparison — Application Engine
-   Flow: Compare → all FIFA-style cards at once → cards
-   glide into 1–10 ranking, crown lands on the champion.
+   Who's the Best Car? — Application Engine
+   One screen, one button: the five cars show their scores,
+   glide into 1–5 order, and the winner gets the crown.
    ========================================================= */
 "use strict";
 
@@ -9,7 +9,7 @@
 let lang = "ar";
 let soundOn = true;
 let running = false;
-let compareStage = "idle"; /* idle | cards | ranked */
+let compareStage = "idle"; /* idle | ranked */
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -20,6 +20,7 @@ const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 const carTotal = (car) => +car.scores.reduce((a, b) => a + b, 0).toFixed(1);
 const carOVR = (car) => Math.round(carTotal(car) * 2); /* /50 → /100 */
 const rankedCars = () => FINAL_RANK_IDS.map((id) => CARS.find((c) => c.id === id));
+const MEDALS = ["🥇", "🥈", "🥉", "4", "5"];
 
 /* ---------------- Language ---------------- */
 function applyLanguage(next) {
@@ -31,10 +32,7 @@ function applyLanguage(next) {
     const key = el.dataset.i18n;
     if (t()[key] !== undefined) el.textContent = t()[key];
   });
-  renderCards();
-  if ($("#arena").classList.contains("active")) {
-    renderFifa(compareStage === "ranked", compareStage !== "idle");
-  }
+  renderGrid(compareStage === "ranked");
   try { localStorage.setItem("uls-lang", lang); } catch (_) { /* storage blocked */ }
 }
 
@@ -68,7 +66,6 @@ const sfx = {
     [392, 523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.5, "triangle", 0.07, i * 0.16));
     tone(196, 1.4, "sine", 0.05, 0.2);
   },
-  drum: () => { for (let i = 0; i < 12; i++) tone(90 + Math.random() * 30, 0.08, "square", 0.03, i * 0.09); },
 };
 
 /* ---------------- Particles ---------------- */
@@ -76,7 +73,7 @@ function startParticles() {
   const canvas = $("#particles");
   const g = canvas.getContext("2d");
   let w, h;
-  const N = 70;
+  const N = 60;
   const ps = [];
   const resize = () => { w = canvas.width = innerWidth; h = canvas.height = innerHeight; };
   resize();
@@ -116,7 +113,7 @@ function burstConfetti(count = 160) {
   for (let i = 0; i < count; i++) {
     confettiPieces.push({
       x: innerWidth / 2 + (Math.random() - 0.5) * innerWidth * 0.55,
-      y: innerHeight * (0.15 + Math.random() * 0.2),
+      y: innerHeight * (0.12 + Math.random() * 0.2),
       vx: (Math.random() - 0.5) * 11,
       vy: -(5 + Math.random() * 9),
       w: 5 + Math.random() * 7, h: 8 + Math.random() * 8,
@@ -148,145 +145,89 @@ function burstConfetti(count = 160) {
   }
 }
 
-/* ---------------- Contender cards ---------------- */
-function renderCards() {
-  const grid = $("#cars-grid");
-  grid.innerHTML = CARS.map(
-    (car) => `
-    <article class="car-card" data-car="${car.id}" tabindex="0" role="button"
-             aria-label="${carName(car)}">
-      <div class="card-top">
-        ${logoHTML(car)}
-        <span class="card-rank-chip">${lang === "ar" ? car.brandAr : car.brandEn}</span>
-      </div>
-      ${photoHTML(car, "card")}
-      <h3>${carName(car)}</h3>
-      <div class="card-color">
-        <span class="swatch" style="background:${car.color}"></span>
-        <span>${lang === "ar" ? car.colorAr : car.colorEn}</span>
-      </div>
-      <div class="card-cta">${lang === "ar" ? "اضغط لعرض المواصفات ←" : "Click for full specs →"}</div>
-    </article>`
-  ).join("");
-
-  const io = new IntersectionObserver(
-    (entries) => entries.forEach((e) => {
-      if (e.isIntersecting) {
-        const idx = [...grid.children].indexOf(e.target);
-        setTimeout(() => e.target.classList.add("in-view"), (idx % 5) * 90);
-        io.unobserve(e.target);
-      }
-    }),
-    { threshold: 0.15 }
-  );
-  $$(".car-card").forEach((el) => {
-    io.observe(el);
-    el.addEventListener("click", () => openModal(el.dataset.car));
-    el.addEventListener("keydown", (ev) => {
-      if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); openModal(el.dataset.car); }
-    });
-  });
-}
-
-/* ---------------- Modal ---------------- */
-function openModal(carId) {
-  sfx.click();
-  const car = CARS.find((c) => c.id === carId);
-  const T = t();
-  const overall = car.scores.reduce((a, b) => a + b, 0) / car.scores.length;
-  const list = (items) => items.map((x) => `<li>${x}</li>`).join("");
-  $("#modal-content").innerHTML = `
-    <div class="modal-hero">
-      ${logoHTML(car)}
-      ${photoHTML(car, "modal")}
-      <h2 class="gold-text">${carName(car)}</h2>
-      <div class="m-color">
-        <span class="swatch" style="background:${car.color}"></span>
-        ${lang === "ar" ? car.colorAr : car.colorEn}
-      </div>
-    </div>
-    <div class="spec-grid">
-      <div class="spec-cell"><div class="sv">${car.specs.hp.toLocaleString("en-US")}</div><div class="sk">${T.horsepower} (${T.hpUnit})</div></div>
-      <div class="spec-cell"><div class="sv">${car.specs.torque.toLocaleString("en-US")}</div><div class="sk">${T.torque} (${T.nmUnit})</div></div>
-      <div class="spec-cell"><div class="sv" style="font-size:1rem;line-height:1.4">${lang === "ar" ? car.specs.engineAr : car.specs.engineEn}</div><div class="sk">${T.engine}</div></div>
-      <div class="spec-cell"><div class="sv">${car.specs.topSpeed}</div><div class="sk">${T.topSpeed} (${T.kmh})</div></div>
-      <div class="spec-cell"><div class="sv">${car.specs.accel}</div><div class="sk">${T.accel} (${T.sec})</div></div>
-      <div class="spec-cell"><div class="sv" style="font-size:1.05rem">${lang === "ar" ? car.specs.priceAr : car.specs.priceEn}</div><div class="sk">${T.price}</div></div>
-    </div>
-    <div class="pros-cons">
-      <div class="pc-box pros"><h4>✓ ${T.pros}</h4><ul>${list(lang === "ar" ? car.prosAr : car.prosEn)}</ul></div>
-      <div class="pc-box cons"><h4>✗ ${T.cons}</h4><ul>${list(lang === "ar" ? car.consAr : car.consEn)}</ul></div>
-    </div>
-    <div class="modal-scores">
-      ${modalScore(T.luxuryScore, car.scores[0])}
-      ${modalScore(T.techScore, car.scores[2])}
-      ${modalScore(T.overallScore, overall)}
-    </div>`;
-  $("#modal-backdrop").classList.add("open");
-  document.body.style.overflow = "hidden";
-  requestAnimationFrame(() =>
-    requestAnimationFrame(() =>
-      $$("#modal-content .mscore .bar-fill").forEach((el) => (el.style.width = el.dataset.w))
-    )
-  );
-}
-function modalScore(label, val) {
-  return `
-    <div class="mscore">
-      <span>${label}</span>
-      <div class="bar-track"><div class="bar-fill" style="width:0" data-w="${val * 10}%"></div></div>
-      <strong style="color:var(--gold-light)">${val.toFixed(1)}</strong>
-    </div>`;
-}
-function closeModal() {
-  $("#modal-backdrop").classList.remove("open");
-  document.body.style.overflow = "";
-}
-
-/* ---------------- FIFA-style comparison cards ---------------- */
-function fifaCard(car, i, ranked, filled) {
+/* ---------------- Car cards ---------------- */
+function carCard(car, i, ranked) {
   const ovr = carOVR(car);
+  const rank = ranked ? FINAL_RANK_IDS.indexOf(car.id) : -1;
   const stats = CATEGORIES.map((cat, ci) => {
     const v = Math.round(car.scores[ci] * 10);
     return `
-      <div class="fstat">
-        <span class="fs-label">${lang === "ar" ? cat.ar : cat.en}</span>
-        <div class="bar-track"><div class="bar-fill" style="width:${filled ? v : 0}%" data-w="${v}"></div></div>
-        <span class="fs-val" data-target="${v}">${filled ? v : 0}</span>
+      <div class="fstat" title="${lang === "ar" ? cat.ar : cat.en}">
+        <span class="fs-icon">${cat.icon}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${ranked ? v : 0}%" data-w="${v}"></div></div>
+        <span class="fs-val" data-target="${v}">${ranked ? v : 0}</span>
       </div>`;
   }).join("");
   return `
-    <article class="fifa-card${ranked && i === 0 ? " champ" : ""}" data-car="${car.id}"
+    <article class="fifa-card${ranked && rank === 0 ? " champ" : ""}" data-car="${car.id}"
              tabindex="0" role="button" aria-label="${carName(car)}"
-             style="animation-delay:${i * 70}ms">
-      <span class="rank-badge">${ranked ? i + 1 : ""}</span>
-      ${ranked && i === 0 ? `<span class="crown-mini">👑</span>` : ""}
+             style="animation-delay:${i * 80}ms">
+      <span class="rank-badge">${ranked ? MEDALS[rank] : ""}</span>
+      ${ranked && rank === 0 ? `<span class="crown-mini">👑</span>` : ""}
       <div class="fifa-top">
         <div class="fifa-ovr">
-          <span class="num" data-target="${ovr}">${filled ? ovr : 0}</span>
+          <span class="num" data-target="${ovr}">${ranked ? ovr : "؟"}</span>
           <span class="lbl">OVR</span>
         </div>
         ${logoHTML(car)}
       </div>
-      ${photoHTML(car, "fifa")}
+      ${photoHTML(car, "grid")}
       <h3>${carName(car)}</h3>
       <div class="fifa-stats">${stats}</div>
     </article>`;
 }
 
-function renderFifa(ranked = false, filled = false) {
+function renderGrid(ranked = false) {
   const grid = $("#fifa-grid");
   const order = ranked ? rankedCars() : CARS;
   grid.classList.toggle("ranked", ranked);
-  grid.innerHTML = order.map((car, i) => fifaCard(car, i, ranked, filled)).join("");
+  grid.innerHTML = order.map((car, i) => carCard(car, i, ranked)).join("");
   grid.querySelectorAll(".fifa-card").forEach((el) => {
     el.addEventListener("click", () => openModal(el.dataset.car));
     el.addEventListener("keydown", (ev) => {
       if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); openModal(el.dataset.car); }
     });
   });
+  document.body.classList.toggle("won", ranked);
 }
 
+/* ---------------- Modal: big photo + scores, no reading required ---------------- */
+function openModal(carId) {
+  sfx.click();
+  const car = CARS.find((c) => c.id === carId);
+  const ovr = carOVR(car);
+  const stats = CATEGORIES.map((cat, ci) => {
+    const v = Math.round(car.scores[ci] * 10);
+    return `
+      <div class="mstat">
+        <span class="ms-icon">${cat.icon}</span>
+        <span class="ms-name">${lang === "ar" ? cat.ar : cat.en}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:0" data-w="${v}%"></div></div>
+        <b class="ms-val">${v}</b>
+      </div>`;
+  }).join("");
+  $("#modal-content").innerHTML = `
+    <div class="modal-hero">
+      ${logoHTML(car)}
+      ${photoHTML(car, "modal")}
+      <h2 class="gold-text">${carName(car)}</h2>
+      <div class="modal-ovr"><span>${ovr}</span> OVR</div>
+    </div>
+    <div class="modal-stats">${stats}</div>`;
+  $("#modal-backdrop").classList.add("open");
+  document.body.style.overflow = "hidden";
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() =>
+      $$("#modal-content .bar-fill").forEach((el) => (el.style.width = el.dataset.w))
+    )
+  );
+}
+function closeModal() {
+  $("#modal-backdrop").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+/* ---------------- Counters ---------------- */
 function animateInt(el, target, dur) {
   const start = performance.now();
   (function step(now) {
@@ -297,7 +238,15 @@ function animateInt(el, target, dur) {
   })(performance.now());
 }
 
-function animateAllStats() {
+/* ---------------- One-click comparison ---------------- */
+async function runComparison() {
+  if (running) return;
+  running = true;
+  sfx.click();
+  $("#compare-btn").disabled = true;
+
+  /* 1 — scores pop on every card */
+  sfx.whoosh();
   $$("#fifa-grid .fifa-card").forEach((cardEl, i) => {
     setTimeout(() => {
       cardEl.querySelectorAll(".fstat").forEach((row, j) => {
@@ -305,59 +254,30 @@ function animateAllStats() {
         const val = row.querySelector(".fs-val");
         setTimeout(() => {
           fill.style.width = `${fill.dataset.w}%`;
-          animateInt(val, +fill.dataset.w, 700);
-        }, j * 90);
+          animateInt(val, +fill.dataset.w, 600);
+        }, j * 70);
       });
       const num = cardEl.querySelector(".fifa-ovr .num");
-      animateInt(num, +num.dataset.target, 1100);
-      if (i % 3 === 0) sfx.tick();
-    }, i * 90);
+      animateInt(num, +num.dataset.target, 900);
+      sfx.tick();
+    }, i * 110);
   });
-}
+  await sleep(1600);
 
-/* ---------------- The comparison show ---------------- */
-async function runComparison() {
-  if (running) return;
-  running = true;
-  compareStage = "cards";
-  sfx.click();
-
-  const arena = $("#arena");
-  arena.classList.add("active");
-  arena.classList.remove("won");
-  renderFifa(false, false);
-  arena.scrollIntoView({ behavior: "smooth", block: "start" });
-
-  await sleep(750);
-  sfx.whoosh();
-  animateAllStats();
-  await sleep(2700);
-  await revealRanking();
-  running = false;
-}
-
-async function revealRanking() {
-  compareStage = "ranked";
-  sfx.drum();
-  await sleep(900);
-
+  /* 2 — cards glide into 1–5 order, crown lands, confetti */
   const grid = $("#fifa-grid");
   const cards = $$("#fifa-grid .fifa-card");
   const first = new Map(cards.map((c) => [c.dataset.car, c.getBoundingClientRect()]));
-
-  /* reorder DOM into final ranking + decorate */
   rankedCars().forEach((car, i) => {
     const el = grid.querySelector(`.fifa-card[data-car="${car.id}"]`);
     grid.appendChild(el);
-    el.querySelector(".rank-badge").textContent = i + 1;
+    el.querySelector(".rank-badge").textContent = MEDALS[i];
     if (i === 0) {
       el.classList.add("champ");
       el.insertAdjacentHTML("beforeend", `<span class="crown-mini">👑</span>`);
     }
   });
   grid.classList.add("ranked");
-
-  /* FLIP: glide every card from its old spot to its rank position */
   cards.forEach((c) => {
     const f = first.get(c.dataset.car);
     const l = c.getBoundingClientRect();
@@ -367,22 +287,27 @@ async function revealRanking() {
   });
   void grid.offsetWidth;
   cards.forEach((c) => {
-    c.style.transition = "transform 0.9s cubic-bezier(0.22, 1, 0.36, 1)";
+    c.style.transition = "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)";
     c.style.transform = "";
   });
+  await sleep(850);
 
-  await sleep(1000);
-  $("#arena").classList.add("won");
+  compareStage = "ranked";
+  document.body.classList.add("won");
   sfx.fanfare();
-  burstConfetti(200);
-  setTimeout(() => burstConfetti(120), 1300);
+  burstConfetti(180);
+  setTimeout(() => burstConfetti(110), 1200);
+  running = false;
 }
 
 /* ---------------- Replay ---------------- */
 function replay() {
+  sfx.click();
   confettiPieces = [];
   compareStage = "idle";
-  runComparison();
+  document.body.classList.remove("won");
+  $("#compare-btn").disabled = false;
+  renderGrid(false);
 }
 
 /* ---------------- Boot ---------------- */
@@ -410,5 +335,5 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#modal-close").addEventListener("click", closeModal);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
-  setTimeout(() => $("#loader").classList.add("hidden"), 1400);
+  setTimeout(() => $("#loader").classList.add("hidden"), 900);
 });

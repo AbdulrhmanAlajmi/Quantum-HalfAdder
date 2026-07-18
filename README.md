@@ -1,52 +1,43 @@
-# 👑 Ultimate Luxury Sedan Comparison — المقارنة المطلقة لسيارات السيدان الفاخرة
+# 👑 Who's the Best Car? — مين أفضل سيارة؟
 
-A premium, single-page interactive experience comparing the world's top ten luxury
-executive sedans — with a Mercedes-inspired black & chrome design — Apple keynote meets Formula 1 timing graphics. **Arabic by default (RTL)** with a one-click English toggle.
+A fun, kid-friendly (ages 6–7) one-screen car comparison in a Mercedes-inspired
+black & chrome theme. **Arabic by default (RTL)** with a one-click English toggle.
+
+## 🎮 How it works — one tap!
+
+1. The five cars are already on screen, each with its real photo and brand logo.
+2. Tap **🏁 ابدأ المقارنة!** — scores pop up on every card (5 icon-labelled bars + a big OVR).
+3. The cards glide into 1–5 order with 🥇🥈🥉 medals — and the **Mercedes S-Class
+   wins the crown 👑** with gold frame and confetti.
+4. Tap any car to see it big with its scores. Tap 🔁 to play again.
+
+## 🚗 The five cars
+
+🥇 Mercedes-Benz S-Class (OVR 98) · 🥈 BMW 7 Series (96) · 🥉 Audi A8 (91) ·
+4 Tesla Model S (90) · 5 Porsche Panamera (89)
 
 ## ✨ Features
 
-- **5 animated comparison categories** (Luxury, Ride Comfort, Technology, Prestige, Overall) with staggered score bars, smooth counters and per-category winner highlights
-- **Live animated leaderboard** that reorders in real time as points are awarded
-- **Suspenseful finale** — ranks 10 → 4 revealed one by one, then a podium ceremony
-- **Champion celebration** — crown drop, gold glow, confetti bursts, sweeping spotlights and a shine animation for the Mercedes-Benz S-Class
-- **Car detail popups** — specs (hp, torque, engine, top speed, 0–100, price), pros/cons and score meters for every car
-- **Gold particle background**, glassmorphism panels, luxury gradients, hover effects
-- **Loading animation**, replay button, skip-to-results button
-- **Sound effects** synthesized live with the Web Audio API (toggleable, no audio files)
-- **Fully responsive**, dark-mode only, `prefers-reduced-motion` respected
-- **Arabic ⇄ English** instant switching with correct RTL/LTR layout (choice remembered)
+- **One compact screen** — no long scrolling, one button, instant result
+- **Real car photos & official brand logos**, resolved automatically at runtime from
+  the Wikimedia Commons API (CORS, no keys, cached); elegant inline-SVG renders and
+  emblems as automatic fallback so the page never breaks offline
+- Icon-only stat bars (💎 🛋️ 🖥️ 👑 🏆) — no reading required
+- Crown drop, gold winner card, confetti, chrome particle background
+- Web Audio sound effects (toggleable), Arabic ⇄ English, responsive, dark-only
 
-## 🏁 Final ranking
-
-🥇 Mercedes-Benz S-Class · 🥈 BMW 7 Series · 🥉 Rolls-Royce Ghost · 4 Bentley Flying Spur ·
-5 Audi A8 · 6 Porsche Panamera · 7 Genesis G90 · 8 Lexus LS · 9 Lucid Air Sapphire ·
-10 Maserati Quattroporte
-
-## 🛠 Tech
+## 🛠 Tech & Run
 
 Pure **HTML + CSS + JavaScript** — no frameworks, no build step.
-Real car photos and official brand logos load automatically at runtime from the
-Wikimedia Commons API (CORS, no keys); elegant inline-SVG renders and emblems are the
-automatic fallback, so the site still works fully offline.
-
-## ▶️ Run
-
-Open `index.html` in any modern browser, or serve the folder:
-
-```bash
-cd luxury-sedan-comparison
-python3 -m http.server 8000   # then visit http://localhost:8000
-```
-
-## 📁 Structure
+Open `index.html`, or: `python3 -m http.server 8000` inside the folder.
 
 ```
 luxury-sedan-comparison/
-├── index.html        # Page structure (AR default, RTL)
-├── css/style.css     # Black & gold theme, glassmorphism, animations
+├── index.html        # One-screen page (AR default, RTL)
+├── css/style.css     # Black & chrome theme, card + crown animations
 └── js/
-    ├── data.js       # Cars, scores, specs, AR/EN translations
-    ├── visuals.js    # Inline SVG car renders & brand emblems (fallback)
+    ├── data.js       # 5 cars, 5 categories, AR/EN strings
+    ├── visuals.js    # SVG car renders & emblems (fallback)
     ├── images.js     # Real photos & logos via Wikimedia Commons API
-    └── app.js        # Comparison engine, leaderboard, podium, FX
+    └── app.js        # One-tap comparison, ranking, confetti
 ```
