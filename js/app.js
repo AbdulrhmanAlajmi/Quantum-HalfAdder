@@ -35,7 +35,7 @@ function applyLanguage(next) {
   renderBarsLabels();
   renderStandings(false);
   renderFinaleTexts();
-  localStorage.setItem("uls-lang", lang);
+  try { localStorage.setItem("uls-lang", lang); } catch (_) { /* storage blocked */ }
 }
 
 /* ---------------- Sounds (WebAudio, no assets) ---------------- */
@@ -492,7 +492,8 @@ function replay() {
 
 /* ---------------- Boot ---------------- */
 document.addEventListener("DOMContentLoaded", () => {
-  const saved = localStorage.getItem("uls-lang");
+  let saved = null;
+  try { saved = localStorage.getItem("uls-lang"); } catch (_) { /* storage blocked */ }
   applyLanguage(saved === "en" ? "en" : "ar");
   startParticles();
 
