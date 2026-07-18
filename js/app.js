@@ -1,5 +1,7 @@
 /* =========================================================
    Ultimate Luxury Sedan Comparison — Application Engine
+   Flow: Compare → all FIFA-style cards at once → cards
+   glide into 1–10 ranking, crown lands on the champion.
    ========================================================= */
 "use strict";
 
@@ -7,19 +9,17 @@
 let lang = "ar";
 let soundOn = true;
 let running = false;
-let skipRequested = false;
-let totals = Object.fromEntries(CARS.map((c) => [c.id, 0]));
+let compareStage = "idle"; /* idle | cards | ranked */
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 const t = () => I18N[lang];
 const carName = (car) => (lang === "ar" ? car.ar : car.en);
-const sleep = (ms) =>
-  new Promise((res) => {
-    const target = skipRequested ? Math.min(ms, 40) : ms;
-    setTimeout(res, target);
-  });
-const fmt = (n) => n.toFixed(1);
+const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+
+const carTotal = (car) => +car.scores.reduce((a, b) => a + b, 0).toFixed(1);
+const carOVR = (car) => Math.round(carTotal(car) * 2); /* /50 → /100 */
+const rankedCars = () => FINAL_RANK_IDS.map((id) => CARS.find((c) => c.id === id));
 
 /* ---------------- Language ---------------- */
 function applyLanguage(next) {
@@ -32,9 +32,9 @@ function applyLanguage(next) {
     if (t()[key] !== undefined) el.textContent = t()[key];
   });
   renderCards();
-  renderBarsLabels();
-  renderStandings(false);
-  renderFinaleTexts();
+  if ($("#arena").classList.contains("active")) {
+    renderFifa(compareStage === "ranked", compareStage !== "idle");
+  }
   try { localStorage.setItem("uls-lang", lang); } catch (_) { /* storage blocked */ }
 }
 
@@ -64,12 +64,11 @@ const sfx = {
   click: () => tone(660, 0.12, "triangle", 0.06),
   tick: () => tone(1180, 0.05, "sine", 0.025),
   whoosh: () => { tone(220, 0.35, "sawtooth", 0.02); tone(330, 0.3, "sine", 0.03, 0.05); },
-  win: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.4, "triangle", 0.06, i * 0.13)); },
   fanfare: () => {
     [392, 523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.5, "triangle", 0.07, i * 0.16));
     tone(196, 1.4, "sine", 0.05, 0.2);
   },
-  drum: () => { for (let i = 0; i < 14; i++) tone(90 + Math.random() * 30, 0.08, "square", 0.03, i * 0.09); },
+  drum: () => { for (let i = 0; i < 12; i++) tone(90 + Math.random() * 30, 0.08, "square", 0.03, i * 0.09); },
 };
 
 /* ---------------- Particles ---------------- */
@@ -149,7 +148,7 @@ function burstConfetti(count = 160) {
   }
 }
 
-/* ---------------- Car cards ---------------- */
+/* ---------------- Contender cards ---------------- */
 function renderCards() {
   const grid = $("#cars-grid");
   grid.innerHTML = CARS.map(
@@ -236,7 +235,7 @@ function modalScore(label, val) {
     <div class="mscore">
       <span>${label}</span>
       <div class="bar-track"><div class="bar-fill" style="width:0" data-w="${val * 10}%"></div></div>
-      <strong style="color:var(--gold-light)">${fmt(val)}</strong>
+      <strong style="color:var(--gold-light)">${val.toFixed(1)}</strong>
     </div>`;
 }
 function closeModal() {
@@ -244,49 +243,75 @@ function closeModal() {
   document.body.style.overflow = "";
 }
 
-/* ---------------- Arena: score bars ---------------- */
-function renderBarsLabels() {
-  const wrap = $("#bars");
-  if (!wrap) return;
-  wrap.innerHTML = CARS.map(
-    (car) => `
-    <div class="bar-row" data-car="${car.id}">
-      <div class="bar-label">
-        <span class="dot" style="background:${car.color}"></span>
-        <span class="bl-name">${carName(car)}</span>
+/* ---------------- FIFA-style comparison cards ---------------- */
+function fifaCard(car, i, ranked, filled) {
+  const ovr = carOVR(car);
+  const stats = CATEGORIES.map((cat, ci) => {
+    const v = Math.round(car.scores[ci] * 10);
+    return `
+      <div class="fstat">
+        <span class="fs-label">${lang === "ar" ? cat.ar : cat.en}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${filled ? v : 0}%" data-w="${v}"></div></div>
+        <span class="fs-val" data-target="${v}">${filled ? v : 0}</span>
+      </div>`;
+  }).join("");
+  return `
+    <article class="fifa-card${ranked && i === 0 ? " champ" : ""}" data-car="${car.id}"
+             tabindex="0" role="button" aria-label="${carName(car)}"
+             style="animation-delay:${i * 70}ms">
+      <span class="rank-badge">${ranked ? i + 1 : ""}</span>
+      ${ranked && i === 0 ? `<span class="crown-mini">👑</span>` : ""}
+      <div class="fifa-top">
+        <div class="fifa-ovr">
+          <span class="num" data-target="${ovr}">${filled ? ovr : 0}</span>
+          <span class="lbl">OVR</span>
+        </div>
+        ${logoHTML(car)}
       </div>
-      <div class="bar-track"><div class="bar-fill"></div></div>
-      <div class="bar-score">0.0</div>
-    </div>`
-  ).join("");
+      ${photoHTML(car, "fifa")}
+      <h3>${carName(car)}</h3>
+      <div class="fifa-stats">${stats}</div>
+    </article>`;
 }
 
-/* ---------------- Live standings (animated leaderboard) ---------------- */
-const ROW_H = 52;
-function renderStandings(animate = true) {
-  const listEl = $("#standings-list");
-  if (!listEl) return;
-  const order = [...CARS].sort((a, b) => totals[b.id] - totals[a.id] || a.en.localeCompare(b.en));
-  listEl.style.height = `${CARS.length * ROW_H - 8}px`;
-  if (!listEl.children.length) {
-    listEl.innerHTML = CARS.map(
-      (car) => `
-      <div class="standing-row" data-car="${car.id}">
-        <span class="pos"></span>
-        <span class="name"></span>
-        <span class="pts">0.0</span>
-      </div>`
-    ).join("");
-  }
-  order.forEach((car, rank) => {
-    const row = listEl.querySelector(`[data-car="${car.id}"]`);
-    if (!animate) row.style.transition = "none";
-    row.style.transform = `translateY(${rank * ROW_H}px)`;
-    row.querySelector(".pos").textContent = rank + 1;
-    row.querySelector(".name").textContent = carName(car);
-    row.querySelector(".pts").textContent = fmt(totals[car.id]);
-    row.classList.toggle("top1", rank === 0 && totals[car.id] > 0);
-    if (!animate) requestAnimationFrame(() => (row.style.transition = ""));
+function renderFifa(ranked = false, filled = false) {
+  const grid = $("#fifa-grid");
+  const order = ranked ? rankedCars() : CARS;
+  grid.classList.toggle("ranked", ranked);
+  grid.innerHTML = order.map((car, i) => fifaCard(car, i, ranked, filled)).join("");
+  grid.querySelectorAll(".fifa-card").forEach((el) => {
+    el.addEventListener("click", () => openModal(el.dataset.car));
+    el.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); openModal(el.dataset.car); }
+    });
+  });
+}
+
+function animateInt(el, target, dur) {
+  const start = performance.now();
+  (function step(now) {
+    const p = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(target * eased);
+    if (p < 1) requestAnimationFrame(step);
+  })(performance.now());
+}
+
+function animateAllStats() {
+  $$("#fifa-grid .fifa-card").forEach((cardEl, i) => {
+    setTimeout(() => {
+      cardEl.querySelectorAll(".fstat").forEach((row, j) => {
+        const fill = row.querySelector(".bar-fill");
+        const val = row.querySelector(".fs-val");
+        setTimeout(() => {
+          fill.style.width = `${fill.dataset.w}%`;
+          animateInt(val, +fill.dataset.w, 700);
+        }, j * 90);
+      });
+      const num = cardEl.querySelector(".fifa-ovr .num");
+      animateInt(num, +num.dataset.target, 1100);
+      if (i % 3 === 0) sfx.tick();
+    }, i * 90);
   });
 }
 
@@ -294,199 +319,69 @@ function renderStandings(animate = true) {
 async function runComparison() {
   if (running) return;
   running = true;
-  skipRequested = false;
-  totals = Object.fromEntries(CARS.map((c) => [c.id, 0]));
-
+  compareStage = "cards";
   sfx.click();
-  $("#arena").classList.add("active");
-  $("#finale").classList.remove("active", "finale-won");
-  $("#compare-btn").disabled = true;
-  renderBarsLabels();
-  $("#standings-list").innerHTML = "";
-  renderStandings(false);
-  $("#arena").scrollIntoView({ behavior: "smooth", block: "start" });
-  await sleep(900);
 
-  for (let ci = 0; ci < CATEGORIES.length; ci++) {
-    if (!running) return;
-    const cat = CATEGORIES[ci];
-    const banner = $("#category-banner");
-    banner.classList.remove("cat-anim");
-    void banner.offsetWidth; /* restart animation */
-    banner.classList.add("cat-anim");
-    $("#cat-icon").textContent = cat.icon;
-    $("#cat-name").textContent = lang === "ar" ? cat.ar : cat.en;
-    $("#cat-count").textContent = `${ci + 1} ${t().of} ${CATEGORIES.length}`;
-    $("#progress-fill").style.width = `${((ci + 1) / CATEGORIES.length) * 100}%`;
-    sfx.whoosh();
+  const arena = $("#arena");
+  arena.classList.add("active");
+  arena.classList.remove("won");
+  renderFifa(false, false);
+  arena.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    /* reset bars */
-    $$("#bars .bar-row").forEach((row) => {
-      row.classList.remove("winner");
-      row.querySelector(".bar-fill").style.width = "0%";
-      row.querySelector(".bar-score").textContent = "0.0";
-      const badge = row.querySelector(".win-badge");
-      if (badge) badge.remove();
-    });
-    await sleep(450);
-
-    /* animate all bars with stagger + counters */
-    const best = Math.max(...CARS.map((c) => c.scores[ci]));
-    CARS.forEach((car, i) => {
-      const row = $(`#bars .bar-row[data-car="${car.id}"]`);
-      const fill = row.querySelector(".bar-fill");
-      const scoreEl = row.querySelector(".bar-score");
-      setTimeout(() => {
-        fill.style.width = `${car.scores[ci] * 10}%`;
-        animateCounter(scoreEl, car.scores[ci], skipRequested ? 80 : 850);
-        if (i % 3 === 0) sfx.tick();
-      }, skipRequested ? 0 : i * 65);
-    });
-    await sleep(1500);
-
-    /* crown category winner(s) */
-    CARS.forEach((car) => {
-      if (car.scores[ci] === best) {
-        const row = $(`#bars .bar-row[data-car="${car.id}"]`);
-        row.classList.add("winner");
-        row.querySelector(".bl-name").insertAdjacentHTML(
-          "afterend", `<span class="win-badge">★ ${t().winnerTag}</span>`
-        );
-      }
-    });
-    sfx.tick();
-    await sleep(650);
-
-    /* award points, refresh leaderboard */
-    CARS.forEach((car) => { totals[car.id] = +(totals[car.id] + car.scores[ci]).toFixed(1); });
-    renderStandings(true);
-    await sleep(1000);
-  }
-
-  await sleep(400);
-  await runFinale();
+  await sleep(750);
+  sfx.whoosh();
+  animateAllStats();
+  await sleep(2700);
+  await revealRanking();
   running = false;
 }
 
-function animateCounter(el, target, dur) {
-  const start = performance.now();
-  (function step(now) {
-    const p = Math.min(1, (now - start) / dur);
-    const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = fmt(target * eased);
-    if (p < 1) requestAnimationFrame(step);
-  })(performance.now());
-}
-
-/* ---------------- Finale: suspense + podium ---------------- */
-function rankedCars() {
-  return FINAL_RANK_IDS.map((id) => CARS.find((c) => c.id === id));
-}
-
-async function runFinale() {
-  const finale = $("#finale");
-  finale.classList.add("active");
-  renderFinaleTexts();
-  finale.scrollIntoView({ behavior: "smooth", block: "start" });
+async function revealRanking() {
+  compareStage = "ranked";
   sfx.drum();
-  await sleep(1400);
+  await sleep(900);
 
-  /* reveal 10th → 4th */
-  const ranked = rankedCars();
-  const listEl = $("#reveal-list");
-  listEl.innerHTML = "";
-  for (let pos = 9; pos >= 3; pos--) {
-    const car = ranked[pos];
-    listEl.insertAdjacentHTML(
-      "afterbegin",
-      `<div class="reveal-row" data-car="${car.id}">
-         <span class="rr-pos">#${pos + 1}</span>
-         ${logoHTML(car)}
-         <span class="rr-name">${carName(car)}</span>
-         <span class="pts">${fmt(totals[car.id])} ${t().points}</span>
-       </div>`
-    );
-    const row = listEl.querySelector(`[data-car="${car.id}"]`);
-    requestAnimationFrame(() => requestAnimationFrame(() => row.classList.add("shown")));
-    sfx.tick();
-    await sleep(pos > 5 ? 700 : 1000);
-  }
+  const grid = $("#fifa-grid");
+  const cards = $$("#fifa-grid .fifa-card");
+  const first = new Map(cards.map((c) => [c.dataset.car, c.getBoundingClientRect()]));
 
-  await sleep(600);
-  sfx.drum();
-  await sleep(skipRequested ? 200 : 1500);
-
-  /* podium: 3rd (Rolls, right) → 2nd (BMW, left) → champion */
-  buildPodium();
-  $(".slot-3").classList.add("shown");
-  sfx.win();
-  await sleep(1300);
-  $(".slot-2").classList.add("shown");
-  sfx.win();
-  await sleep(1600);
-
-  $(".slot-1").classList.add("shown");
-  await sleep(650);
-  finale.classList.add("finale-won");
-  sfx.fanfare();
-  burstConfetti(220);
-  setTimeout(() => burstConfetti(120), 1300);
-  setTimeout(() => burstConfetti(90), 2800);
-  $("#compare-btn").disabled = false;
-}
-
-function buildPodium() {
-  const ranked = rankedCars();
-  const [first, second, third] = ranked;
-  const slot = (car, cls, block, extras = "") => `
-    <div class="podium-slot ${cls}">
-      <div class="podium-car">
-        ${extras}
-        ${photoHTML(car, cls)}
-      </div>
-      <div class="p-name">${carName(car)}</div>
-      <div class="p-pts">${fmt(totals[car.id])} ${t().points}</div>
-      <div class="podium-block">${block}</div>
-    </div>`;
-  /* visual order fixed LTR: BMW left, Mercedes center, Rolls right */
-  $("#podium").innerHTML =
-    slot(second, "slot-2", "🥈2") +
-    slot(first, "slot-1", "🥇1", `<span class="crown">👑</span><span class="champion-glow"></span>`) +
-    slot(third, "slot-3", "🥉3");
-
-  $("#final-table-list").innerHTML = ranked.map(
-    (car, i) => `
-    <div class="reveal-row shown" style="transition:none">
-      <span class="rr-pos">${i < 3 ? t().medals[i] : "#" + (i + 1)}</span>
-      ${logoHTML(car)}
-      <span class="rr-name">${carName(car)}</span>
-      <span class="pts">${fmt(totals[car.id])} ${t().points}</span>
-    </div>`
-  ).join("");
-}
-
-function renderFinaleTexts() {
-  if (!$("#finale").classList.contains("active")) return;
-  if ($("#podium").children.length) buildPodium();
-  /* re-render reveal list in current language */
-  $$("#reveal-list .reveal-row").forEach((row) => {
-    const car = CARS.find((c) => c.id === row.dataset.car);
-    if (car) {
-      row.querySelector(".rr-name").textContent = carName(car);
-      row.querySelector(".pts").textContent = `${fmt(totals[car.id])} ${t().points}`;
+  /* reorder DOM into final ranking + decorate */
+  rankedCars().forEach((car, i) => {
+    const el = grid.querySelector(`.fifa-card[data-car="${car.id}"]`);
+    grid.appendChild(el);
+    el.querySelector(".rank-badge").textContent = i + 1;
+    if (i === 0) {
+      el.classList.add("champ");
+      el.insertAdjacentHTML("beforeend", `<span class="crown-mini">👑</span>`);
     }
   });
+  grid.classList.add("ranked");
+
+  /* FLIP: glide every card from its old spot to its rank position */
+  cards.forEach((c) => {
+    const f = first.get(c.dataset.car);
+    const l = c.getBoundingClientRect();
+    c.style.animation = "none";
+    c.style.transition = "none";
+    c.style.transform = `translate(${f.left - l.left}px, ${f.top - l.top}px)`;
+  });
+  void grid.offsetWidth;
+  cards.forEach((c) => {
+    c.style.transition = "transform 0.9s cubic-bezier(0.22, 1, 0.36, 1)";
+    c.style.transform = "";
+  });
+
+  await sleep(1000);
+  $("#arena").classList.add("won");
+  sfx.fanfare();
+  burstConfetti(200);
+  setTimeout(() => burstConfetti(120), 1300);
 }
 
 /* ---------------- Replay ---------------- */
 function replay() {
-  sfx.click();
   confettiPieces = [];
-  $("#finale").classList.remove("active", "finale-won");
-  $("#podium").innerHTML = "";
-  $("#reveal-list").innerHTML = "";
-  $("#final-table-list").innerHTML = "";
-  running = false;
+  compareStage = "idle";
   runComparison();
 }
 
@@ -508,7 +403,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (soundOn) sfx.click();
   });
   $("#compare-btn").addEventListener("click", runComparison);
-  $("#skip-btn").addEventListener("click", () => { skipRequested = true; sfx.click(); });
   $("#replay-btn").addEventListener("click", replay);
   $("#modal-backdrop").addEventListener("click", (e) => {
     if (e.target === e.currentTarget) closeModal();
@@ -516,6 +410,5 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#modal-close").addEventListener("click", closeModal);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
-  /* loader */
   setTimeout(() => $("#loader").classList.add("hidden"), 1400);
 });

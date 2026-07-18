@@ -8,7 +8,7 @@
 "use strict";
 
 const CAR_MEDIA = {}; /* carId -> { photo, logo } */
-const MEDIA_CACHE_KEY = "uls-media-v2";
+const MEDIA_CACHE_KEY = "uls-media-v3";
 const MEDIA_CACHE_TTL = 7 * 24 * 3600 * 1000;
 
 const COMMONS_API = "https://commons.wikimedia.org/w/api.php";
@@ -46,12 +46,17 @@ function pickBest(json, mimes) {
 }
 
 async function resolveCarMedia(car) {
-  const [photoJson, logoJson] = await Promise.all([
-    commonsSearch(car.photoQuery, "bitmap", 1000),
-    commonsSearch(car.logoQuery, "drawing|bitmap", 320),
-  ]);
-  const photo = pickBest(photoJson, ["image/jpeg", "image/png", "image/webp"]);
-  const logo = pickBest(logoJson, ["image/svg+xml", "image/png", "image/jpeg"]);
+  /* photoQuery may list several candidate searches, most precise first
+     (e.g. an exact Commons category, then free-text fallbacks) */
+  const photoQueries = Array.isArray(car.photoQuery) ? car.photoQuery : [car.photoQuery];
+  const logoPromise = commonsSearch(car.logoQuery, "drawing|bitmap", 320);
+  let photo = null;
+  for (const q of photoQueries) {
+    const json = await commonsSearch(q, "bitmap", 1000);
+    photo = pickBest(json, ["image/jpeg", "image/png", "image/webp"]);
+    if (photo) break;
+  }
+  const logo = pickBest(await logoPromise, ["image/svg+xml", "image/png", "image/jpeg"]);
   const media = {};
   if (photo) media.photo = photo;
   if (logo) media.logo = logo;

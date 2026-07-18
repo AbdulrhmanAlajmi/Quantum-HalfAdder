@@ -61,64 +61,21 @@
     <div id="cars-grid" class="cars-grid"></div>
   </section>
 
-  <!-- Arena -->
+  <!-- Comparison arena: FIFA-style cards → animated 1–10 ranking -->
   <section id="arena">
     <div class="section-head">
       <h2 class="gold-text" data-i18n="arenaTitle">حلبة المقارنة</h2>
       <div class="head-rule"></div>
     </div>
-    <div class="arena-shell">
-      <div class="glass-panel">
-        <div id="category-banner" class="category-banner">
-          <div class="category-title">
-            <span id="cat-icon" class="cat-icon">💎</span>
-            <span id="cat-name">—</span>
-          </div>
-          <div class="category-progress"><span id="cat-count">0</span></div>
-          <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
-        </div>
-        <div id="bars" class="bars"></div>
-        <div class="skip-wrap">
-          <button id="skip-btn" class="chip-btn" data-i18n="skip">تخطّي إلى النتيجة ⏭</button>
-        </div>
-      </div>
-      <aside class="glass-panel standings">
-        <h3 data-i18n="liveStandings">الترتيب المباشر</h3>
-        <div id="standings-list" class="standings-list"></div>
-      </aside>
-    </div>
-  </section>
 
-  <!-- Finale -->
-  <section id="finale">
-    <div class="section-head">
-      <h2 class="gold-text" data-i18n="finalTitle">النتيجة النهائية</h2>
-      <div class="head-rule"></div>
-    </div>
+    <div id="fifa-grid" class="fifa-grid"></div>
 
-    <p class="suspense-title" data-i18n="suspense">لحظة الحسم…</p>
-    <div id="reveal-list" class="reveal-list"></div>
-
-    <div class="podium-stage">
-      <div class="spotlights" aria-hidden="true">
-        <span class="spot s1"></span>
-        <span class="spot s2"></span>
-      </div>
-      <div id="podium" class="podium"></div>
-    </div>
-
-    <div class="champion-titles">
+    <div id="champion-block" class="champion-block">
       <h2 class="gold-text" data-i18n="championTitle">ملكة سيارات السيدان الفاخرة</h2>
       <p data-i18n="championSubtitle">مرسيدس-بنز الفئة S تبقى المعيار الأعلى للفخامة التنفيذية.</p>
-    </div>
-
-    <div class="replay-wrap">
-      <button id="replay-btn" class="replay-btn" data-i18n="replay">🔁 إعادة المقارنة</button>
-    </div>
-
-    <div class="final-table">
-      <h3 data-i18n="fullRanking">الترتيب الكامل</h3>
-      <div id="final-table-list" class="reveal-list"></div>
+      <div class="replay-wrap">
+        <button id="replay-btn" class="replay-btn" data-i18n="replay">🔁 إعادة المقارنة</button>
+      </div>
     </div>
   </section>
 

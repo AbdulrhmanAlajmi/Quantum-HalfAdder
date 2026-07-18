@@ -61,7 +61,7 @@ const CARS = [
     brandEn: "Audi", brandAr: "أودي",
     colorEn: "Floret Silver", colorAr: "فضي فلوريت",
     color: "#c8ccd4", colorLight: "#eef0f4", accent: "#9aa2ae",
-    scores: [9.0, 9.2, 9.3, 8.7, 9.0],
+    scores: [9.0, 9.2, 9.4, 8.7, 9.0],
     photoQuery: "Audi A8 D5 2022", logoQuery: "Audi logo 2016",
     specs: {
       engineEn: "4.0L V8 TFSI", engineAr: "V8 تيربو 4.0 لتر TFSI",
@@ -80,7 +80,8 @@ const CARS = [
     colorEn: "Sonic White", colorAr: "أبيض سونيك",
     color: "#f2f3f5", colorLight: "#ffffff", accent: "#b9bec7",
     scores: [8.8, 9.1, 8.4, 8.1, 9.0],
-    photoQuery: "Lexus LS 500 2021", logoQuery: "Lexus logo",
+    photoQuery: ['incategory:"Lexus LS (XF50)"', "Lexus LS 500h XF50 white", "Lexus LS 500"],
+    logoQuery: "Lexus logo",
     specs: {
       engineEn: "3.5L V6 Twin-Turbo", engineAr: "V6 مزدوج التيربو 3.5 لتر",
       hp: 416, torque: 600, topSpeed: 250, accel: "5.0", priceEn: "$80,000", priceAr: "80,000 دولار",
@@ -170,7 +171,8 @@ const CARS = [
     colorEn: "Arctic White", colorAr: "أبيض قطبي",
     color: "#f7f7f4", colorLight: "#ffffff", accent: "#7d6a3a",
     scores: [10.0, 9.8, 8.4, 10.0, 9.4],
-    photoQuery: "Rolls-Royce Ghost 2021", logoQuery: "Rolls-Royce Motor Cars logo",
+    photoQuery: ['incategory:"Rolls-Royce Ghost (2020)"', "Rolls-Royce Ghost II 2021 white sedan", "Rolls-Royce Ghost"],
+    logoQuery: "Rolls-Royce Motor Cars logo",
     specs: {
       engineEn: "6.75L V12 Twin-Turbo", engineAr: "V12 مزدوج التيربو 6.75 لتر",
       hp: 563, torque: 850, topSpeed: 250, accel: "4.8", priceEn: "$350,000", priceAr: "350,000 دولار",
